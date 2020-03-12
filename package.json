@@ -1,0 +1,58 @@
+{
+  "name": "coventry-18.2-webapi-backend",
+  "version": "1.0.0",
+  "description": "A simple api to manage shopping cart and clothing store using express and mongo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "npm run -s build",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist",
+    "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist && cp src/.env dist/.env",
+    "watch": "nodemon -e js,ts --watch src --exec \"npm run build && npm run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://shashilaheshan@bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend.git"
+  },
+  "keywords": [
+    "express",
+    "nodejs",
+    "clean"
+  ],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "find-config": "^1.0.0",
+    "mongoose": "^5.9.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
+    "@babel/register": "^7.8.6",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "faker": "^4.1.0",
+    "jest": "^23.6.0",
+    "regenerator-runtime": "^0.13.1",
+    "rimraf": "^2.6.3"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/env",
+        {
+          "targets": {
+            "node": "10.16.1"
+          }
+        }
+      ]
+    ]
+  }
+}
