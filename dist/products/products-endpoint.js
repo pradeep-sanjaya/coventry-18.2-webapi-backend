@@ -58,6 +58,19 @@ function makeProductsEndpointHandler({
     };
   }
 
-  async function postProduct(httpRequest) {}
+  async function postProduct(httpRequest) {
+    var result = await productList.add({
+      "product": httpRequest.body
+    });
+    return {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      statusCode: 200,
+      data: {
+        result
+      }
+    };
+  }
 }
 //# sourceMappingURL=products-endpoint.js.map

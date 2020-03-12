@@ -1,4 +1,19 @@
-export default function makeProductList ({ database }) {
+import mongoose from 'mongoose';
+var ProductSchema = mongoose.Schema({
+  name: {
+    type: String,
+    unique: true
+
+  },
+
+  price: Number,
+  quantity: Number,
+  size: Array
+});
+var Product = mongoose.model('Product', ProductSchema, 'productstore');
+export default function makeProductList({
+  database
+}) {
   return Object.freeze({
     add,
     findById,
@@ -8,26 +23,39 @@ export default function makeProductList ({ database }) {
     update
   })
 
-  async function getItems ({ max = 100, before, after } = {}) {
-    
+  async function getItems({
+    max = 100,
+    before,
+    after
+  } = {}) {
+
   }
 
-  async function add ({ contactId, ...contact }) {
-   
+  async function add({
+    product
+  }) {
+
+    var pro = new Product(product);
+    return pro.save();
+
   }
 
-  async function findById ({ contactId }) {
-   
+  async function findById({
+
+  }) {
+
   }
 
-  async function remove ({ contactId, ...contact }) {
-  
+  async function remove({
+
+  }) {
+
   }
 
   // todo:
-  async function replace (contact) {}
+  async function replace() {}
 
   // todo:
-  async function update (contact) {}
+  async function update() {}
 
 }
