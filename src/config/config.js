@@ -1,7 +1,9 @@
-var config = {};
+import dotenv from "dotenv";
+dotenv.config();
 
-config.DB_URL = process.env.MONGO_URL || null;
-
-config.PORT = process.env.WEB_PORT || 9090;
+let config = {
+    databaseUrl: process.env.MONGODB_URL || null,
+    databasePort: process.env.PORT || 9090
+};
 
 export default config;

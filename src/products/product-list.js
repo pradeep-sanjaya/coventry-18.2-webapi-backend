@@ -21,7 +21,7 @@ export default function makeProductList({
     remove,
     replace,
     update
-  })
+  });
 
   async function getItems({
     max = 100,
