@@ -1,8 +1,7 @@
-import config from "./config/config";
-
 import express from "express";
-
 import bodyParser from "body-parser";
+
+import config from "./config/config";
 
 import database from "./helpers/database";
 

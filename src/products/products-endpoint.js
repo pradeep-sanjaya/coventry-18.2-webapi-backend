@@ -1,5 +1,5 @@
 import makeHttpError from "../helpers/validators/http-error";
-import {METHOD_NOT_ALLOWED, SUCCESS} from "../helpers/http-request/response";
+import HttpResponseType from "../models/http-response-type";
 
 export default function makeProductsEndpointHandler({
   productList
@@ -16,7 +16,7 @@ export default function makeProductsEndpointHandler({
 
            default:
              return makeHttpError({
-               statusCode: METHOD_NOT_ALLOWED,
+               statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
                errorMessage: `${httpRequest.method} method not allowed.`
              });
          }
@@ -31,16 +31,15 @@ export default function makeProductsEndpointHandler({
 
           default:
             return makeHttpError({
-              statusCode: METHOD_NOT_ALLOWED,
+              statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
               errorMessage: `${httpRequest.method} method not allowed.`
             });
         }
       default:
         return makeHttpError({
-          statusCode: METHOD_NOT_ALLOWED,
+          statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
           errorMessage: `${httpRequest.method} method not allowed.`
         });
-
     }
   };
 
@@ -70,7 +69,7 @@ export default function makeProductsEndpointHandler({
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: SUCCESS,
+      statusCode: HttpResponseType.SUCCESS,
       data: JSON.stringify({
         result
       })
@@ -78,14 +77,15 @@ export default function makeProductsEndpointHandler({
   }
 
   async function postProduct(httpRequest) {
-    var result = await productList.add({
+    let result = await productList.add({
       "product": httpRequest.body
     });
+
     return {
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: SUCCESS,
+      statusCode: HttpResponseType.SUCCESS,
       data: {
         result
       }
@@ -93,21 +93,20 @@ export default function makeProductsEndpointHandler({
     };
 
   }
-
   async function addCategory(httpRequest) {
-    var result = await productList.addCategory({
+    let result = await productList.addCategory({
       "category": httpRequest.body
     });
+
     return {
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: SUCCESS,
+      statusCode: HttpResponseType.SUCCESS,
       data: {
         result
       }
     };
-
   }
 
   async function getCategories(httpRequest) {
@@ -126,11 +125,10 @@ export default function makeProductsEndpointHandler({
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: SUCCESS,
+      statusCode: HttpResponseType.SUCCESS,
       data: JSON.stringify({
         result
       })
     };
   }
-
 }

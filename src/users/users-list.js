@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-var UserSchema = mongoose.Schema({
+let UserSchema = mongoose.Schema({
   username: {
     type: String,
     unique: true
@@ -18,7 +18,8 @@ var UserSchema = mongoose.Schema({
     required: true
   }
 });
-var User = mongoose.model('User', UserSchema, 'users');
+
+let User = mongoose.model('User', UserSchema, 'users');
 export default function makeUserList({
   database
 }) {
@@ -28,11 +29,11 @@ export default function makeUserList({
     remove,
     replace,
     update
-  })
+  });
   async function add({
     user
   }) {
-    var userObj = new User(user);
+    let userObj = new User(user);
     return userObj.save();
   }
 

@@ -1,25 +1,23 @@
 import mongoose from 'mongoose';
-var ProductSchema = mongoose.Schema({
+let ProductSchema = mongoose.Schema({
   name: {
     type: String,
     unique: true
-
   },
-
   price: Number,
   quantity: Number,
   size: Array
 });
 
-var CategorySchema = mongoose.Schema({
+let CategorySchema = mongoose.Schema({
   name: {
     type: String,
     unique: true
   }
 });
-var Product = mongoose.model('Product', ProductSchema, 'products');
+let Product = mongoose.model('Product', ProductSchema, 'products');
 
-var Category = mongoose.model('Category', CategorySchema, 'categories');
+let Category = mongoose.model('Category', CategorySchema, 'categories');
 
 export default function makeProductList({
   database
@@ -58,10 +56,8 @@ export default function makeProductList({
   async function add({
     product
   }) {
-
-    var pro = new Product(product);
+    let pro = new Product(product);
     return pro.save();
-
   }
 
   async function findById({
