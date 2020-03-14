@@ -1,13 +1,13 @@
-import initDb from '../helpers/database'
-import makeUserList from './users-list'
-import makeUsersEndpointHandler from './users-endpoint'
+import initDb from '../helpers/database';
+import makeUserList from './users-list';
+import makeUsersEndpointHandler from './users-endpoint';
 
 const database =  initDb();
 const userList = makeUserList({
-    database
+	database
 });
 const usersEndpointHandler = makeUsersEndpointHandler({
-    userList
+	userList
 });
 
-export default usersEndpointHandler
+export default usersEndpointHandler;

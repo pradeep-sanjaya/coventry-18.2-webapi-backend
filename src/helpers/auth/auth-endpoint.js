@@ -7,7 +7,7 @@ import hasher from '../../helpers/hasher';
 import HttpResponseType from '../../models/http-response-type';
 import sendEmail from '../mail/mailer';
 
-import * as statusMapper from '../utilities/http-error-status-mapper'
+import * as statusMapper from '../utilities/http-error-status-mapper';
 
 function response({
 	response,
@@ -19,8 +19,8 @@ function response({
 		},
 		statusCode: code,
 		data: JSON.stringify({
-				response
-			}
+			response
+		}
 		)
 	};
 }

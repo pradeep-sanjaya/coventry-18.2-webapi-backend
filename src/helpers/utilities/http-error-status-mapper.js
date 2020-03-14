@@ -21,6 +21,6 @@ exports.httpErrorStatusMapper = function (statusCode) {
 	case 503:
 		return 'CS-5030';
 	default:
-		return 'CS-0000'
+		return 'CS-0000';
 	}
 };

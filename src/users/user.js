@@ -1,3 +1,3 @@
 export default function makeUser(
-  userInfo
-) { return Object.freeze(userInfo) }
+	userInfo
+) { return Object.freeze(userInfo); }

@@ -8,14 +8,14 @@ export default function authController(req, res) {
 
 	handleAuthRequest(httpRequest)
 		.then(({
-				headers,
-				statusCode,
-				data
-			}) =>
-				res
-					.set(headers)
-					.status(statusCode)
-					.send(data)
+			headers,
+			statusCode,
+			data
+		}) =>
+			res
+				.set(headers)
+				.status(statusCode)
+				.send(data)
 		)
 		.catch(e => res.status(HttpResponseType.INTERNAL_SERVER_ERROR).end());
 }

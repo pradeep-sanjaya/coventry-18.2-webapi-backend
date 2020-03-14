@@ -7,7 +7,7 @@
     "prestart": "npm run -s build",
     "start": "npm run build && node dist/index.js",
     "clean": "rimraf dist",
-    "lint": "eslint --fix --config .eslintrc.json \"**/*.js\"",
+    "lint": "eslint --fix --config .eslintrc.json \"src/**/*.js\"",
     "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist",
     "watch": "nodemon -e js --watch src --exec \"npm run start\""
   },
@@ -69,6 +69,7 @@
     "@babel/core": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
     "@babel/register": "^7.8.6",
+    "babel-eslint": "^10.1.0",
     "babel-core": "^6.26.3",
     "faker": "^4.1.0",
     "regenerator-runtime": "^0.13.1",
