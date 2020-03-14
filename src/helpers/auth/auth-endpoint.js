@@ -97,6 +97,12 @@ export default function makeAuthEndPointHandler({
 					}),
 					'email': httpRequest.body['email'],
 					'role': httpRequest.body['role'],
+					'contactNumber': httpRequest.body['contactNumber'],
+					'gender': httpRequest.body['gender'],
+					'firstName': httpRequest.body['firstName'],
+					'lastName': httpRequest.body['lastName'],
+					'questionId': httpRequest.body['questionId'],
+					'answer': httpRequest.body['answer']
 				}
 			});
 

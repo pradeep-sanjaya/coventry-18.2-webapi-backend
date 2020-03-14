@@ -3,15 +3,38 @@ import mongoose from 'mongoose';
 const UserSchema = mongoose.Schema;
 
 let userSchema = UserSchema({
-	userId: {
-		type: UserSchema.Types.ObjectId,
-		unique: true,
-		auto: true
-	},
 	username: {
 		type: String,
 		required: true,
 		unique: true
+	},
+	contactNumber: {
+		type: String,
+		required: true,
+		unique: true,
+		minlength: 10,
+		maxlength: 10
+	},
+	gender: {
+		type: String,
+		required: true,
+		enum: ['Male', 'Female']
+	},
+	firstName: {
+		type: String,
+		required: true
+	},
+	lastName: {
+		type: String,
+		required: true
+	},
+	questionId: {
+		type: Number,
+		required: true
+	},
+	answer: {
+		type: String,
+		required: true
 	},
 	email: {
 		type: String,
@@ -21,12 +44,12 @@ let userSchema = UserSchema({
 	password: {
 		type: String,
 		required: true,
-		minLength: 8
+		minlength: 8
 	},
 	role: {
 		type: String,
 		required: true,
-		enum: ["Admin", "Customer"]
+		enum: ['Admin', 'Customer']
 	}
 });
 

@@ -3,11 +3,6 @@ import mongoose from 'mongoose';
 const CategorySchema = mongoose.Schema;
 
 let categorySchema = CategorySchema({
-	categoryId: {
-		type: CategorySchema.Types.ObjectId,
-		unique: true,
-		auto: true
-	},
 	category: {
 		type: String,
 		unique: true,

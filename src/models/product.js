@@ -9,11 +9,6 @@ let productSchema = ProductSchema({
 		enum: ['Men', 'Women'],
 		required: true
 	},
-	productId: {
-		type: ProductSchema.Types.ObjectId,
-		unique: true,
-		auto: true
-	},
 	productName: {
 		type: String,
 		required: true
