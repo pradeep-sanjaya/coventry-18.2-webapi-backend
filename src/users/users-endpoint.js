@@ -1,5 +1,6 @@
 import makeHttpError from "../helpers/validators/http-error";
 import hashValue from '../helpers/hasher'
+import {METHOD_NOT_ALLOWED, MISDIRECTED_REQUEST, SUCCESS} from "../helpers/http-request/response";
 
 export default function makeUsersEndpointHandler({
   userList
@@ -14,7 +15,7 @@ export default function makeUsersEndpointHandler({
 
       default:
         return makeHttpError({
-          statusCode: 405,
+          statusCode: METHOD_NOT_ALLOWED,
           errorMessage: `${httpRequest.method} method not allowed.`
         });
     }
@@ -35,7 +36,7 @@ export default function makeUsersEndpointHandler({
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: 200,
+      statusCode: SUCCESS,
       data: JSON.stringify({})
     };
   }
@@ -59,7 +60,7 @@ export default function makeUsersEndpointHandler({
         headers: {
           "Content-Type": "application/json"
         },
-        statusCode: 200,
+        statusCode: SUCCESS,
         data: {
           result
         }
@@ -70,7 +71,7 @@ export default function makeUsersEndpointHandler({
     }) {
 
       return makeHttpError({
-        statusCode: 421,
+        statusCode: MISDIRECTED_REQUEST,
         errorMessage: `${errmsg}.`
       });
 

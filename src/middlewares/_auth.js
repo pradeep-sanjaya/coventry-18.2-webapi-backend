@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/config'
+import {AUTH_REQUIRED, FORBIDDEN} from "../helpers/http-request/response";
 
 //token check middleware
 export default function authenticateJWT(req, res, next) {
@@ -13,7 +14,7 @@ export default function authenticateJWT(req, res, next) {
 
             if (err) {
 
-                return res.sendStatus(403);
+                return res.sendStatus(FORBIDDEN);
             }
             req.user = user;
 
@@ -22,7 +23,7 @@ export default function authenticateJWT(req, res, next) {
 
     } else {
 
-        res.sendStatus(401);
+        res.sendStatus(AUTH_REQUIRED);
 
     }
 };

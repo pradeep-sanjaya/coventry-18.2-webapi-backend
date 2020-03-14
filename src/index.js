@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 
 database();
 
-app.all('/api/v1/products', authenticateJWT, productsController)
+app.all('/api/v1/products', authenticateJWT, productsController);
 
-app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/auth', authRouter);
 
 app.listen(config.apiPort, () => console.log(`Listening on port ${config.apiPort}`));

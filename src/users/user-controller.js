@@ -1,9 +1,10 @@
 import handleUsersRequest from './'
 
 import normalizedRequest from '../helpers/normalize-request'
+import {INTERNAL_SERVER_ERROR} from "../helpers/http-request/response";
 
 export default function usersController(req, res) {
-    const httpRequest = normalizedRequest(req)
+    const httpRequest = normalizedRequest(req);
     handleUsersRequest(httpRequest)
         .then(({
                 headers,
@@ -15,5 +16,5 @@ export default function usersController(req, res) {
             .status(statusCode)
             .send(data)
         )
-        .catch(e => res.status(500).end())
+        .catch(e => res.status(INTERNAL_SERVER_ERROR).end())
 }

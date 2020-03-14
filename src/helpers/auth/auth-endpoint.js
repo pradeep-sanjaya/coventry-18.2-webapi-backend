@@ -2,6 +2,7 @@ import makeHttpError from "../validators/http-error";
 import hashValidator from '../validators/hash-validator'
 import jwtHandler from '../../helpers/validators/token-handler'
 import hasher from '../../helpers/hasher'
+import {AUTH_REQUIRED, METHOD_NOT_ALLOWED, SUCCESS} from "../http-request/response";
 
 function response({
     response,
@@ -19,7 +20,7 @@ function response({
         )
     };
 }
-export default function makeAuthEndPointHanlder({
+export default function makeAuthEndPointHandler({
     userList
 }) {
     return async function handle(httpRequest) {
@@ -33,7 +34,7 @@ export default function makeAuthEndPointHanlder({
 
             default:
                 return makeHttpError({
-                    statusCode: 405,
+                    statusCode: METHOD_NOT_ALLOWED,
                     errorMessage: `${httpRequest.method} method not allowed.`
                 });
         }
@@ -59,7 +60,7 @@ export default function makeAuthEndPointHanlder({
                         "success": true,
                         "accessToken": accessToken
                     },
-                    "code": 200,
+                    "code": SUCCESS,
                 });
             } else {
                 return response({
@@ -67,7 +68,7 @@ export default function makeAuthEndPointHanlder({
                         "success": false,
                         "error": "Invalid Credentials"
                     },
-                    "code": 401
+                    "code": AUTH_REQUIRED
                 });
             }
         }catch (e) {
@@ -76,7 +77,7 @@ export default function makeAuthEndPointHanlder({
                     "success": false,
                     "error": e.toString()
                 },
-                "code": 401
+                "code": AUTH_REQUIRED
             });
         }
     }
@@ -93,24 +94,24 @@ export default function makeAuthEndPointHanlder({
                     }),
                     "role": httpRequest.body["role"],
                 }
-            })
+            });
 
             let accessToken = await jwtHandler({
                 user
-            })
+            });
 
             return response({
                 "response": {
                     "success": true,
                     "accessToken": accessToken
                 },
-                "code": 200,
+                "code": SUCCESS,
             });
 
         } catch (e) {
 
             return makeHttpError({
-                statusCode: 405,
+                statusCode: METHOD_NOT_ALLOWED,
                 errorMessage: `${e}.`
             });
 

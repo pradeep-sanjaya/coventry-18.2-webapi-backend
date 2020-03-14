@@ -1,4 +1,5 @@
 import makeHttpError from "../helpers/validators/http-error";
+import {METHOD_NOT_ALLOWED, SUCCESS} from "../helpers/http-request/response";
 
 export default function makeProductsEndpointHandler({
   productList
@@ -13,7 +14,7 @@ export default function makeProductsEndpointHandler({
 
       default:
         return makeHttpError({
-          statusCode: 405,
+          statusCode: METHOD_NOT_ALLOWED,
           errorMessage: `${httpRequest.method} method not allowed.`
         });
     }
@@ -44,7 +45,7 @@ export default function makeProductsEndpointHandler({
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: 200,
+      statusCode: SUCCESS,
       data: JSON.stringify({
         result
       })
@@ -59,7 +60,7 @@ export default function makeProductsEndpointHandler({
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: 200,
+      statusCode: SUCCESS,
       data: {
         result
       }
