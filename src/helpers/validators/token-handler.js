@@ -5,7 +5,8 @@ export default async function getAuthTokenforUser({
 }) {
     const accessToken = jwt.sign({
         username: user.username,
-        role: user.role
+        role: user.role,
+        expiresIn:  60
     }, config.jwtSecret);
 
     return accessToken;

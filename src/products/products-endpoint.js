@@ -80,7 +80,7 @@ export default function makeProductsEndpointHandler({
   async function postProduct(httpRequest) {
     var result = await productList.add({
       "product": httpRequest.body
-    })
+    });
     return {
       headers: {
         "Content-Type": "application/json"
@@ -93,6 +93,7 @@ export default function makeProductsEndpointHandler({
     };
 
   }
+
   async function addCategory(httpRequest) {
     var result = await productList.addCategory({
       "category": httpRequest.body
@@ -105,7 +106,6 @@ export default function makeProductsEndpointHandler({
       data: {
         result
       }
-
     };
 
   }
