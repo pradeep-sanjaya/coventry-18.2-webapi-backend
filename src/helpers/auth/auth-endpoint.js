@@ -3,6 +3,7 @@ import hashValidator from '../validators/hash-validator'
 import jwtHandler from '../../helpers/validators/token-handler'
 import hasher from '../../helpers/hasher'
 import {AUTH_REQUIRED, METHOD_NOT_ALLOWED, SUCCESS} from "../http-request/response";
+import sendEmail from "../mail/mailer";
 
 function response({
     response,
@@ -92,6 +93,7 @@ export default function makeAuthEndPointHandler({
                     "password": hasher({
                         "password": httpRequest.body["password"],
                     }),
+                    "email":httpRequest.body["email"],
                     "role": httpRequest.body["role"],
                 }
             });
@@ -99,7 +101,7 @@ export default function makeAuthEndPointHandler({
             let accessToken = await jwtHandler({
                 user
             });
-
+            await sendEmail({'from':'webapi@gmail.com','to':user.email,'subject':"Registration Successful.",'text':"Registration successful. Thanks for choosing our store."});
             return response({
                 "response": {
                     "success": true,

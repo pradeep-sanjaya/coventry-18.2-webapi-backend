@@ -1,15 +1,15 @@
 import express from 'express';
-var authRouter = express.Router();
+var _authrouter = express.Router();
 import authController from '../helpers/auth/auth-controller'
 
 /* GET users login. */
-authRouter.post('/login', function (req, res, next) {
+_authrouter.post('/login', function (req, res, next) {
     authController(req,res)
 });
 
-/* POST users register. */
-authRouter.post('/register', function (req, res, next) {
+/* GET users register. */
+_authrouter.post('/register', function (req, res, next) {
     authController(req,res)
 });
 
-module.exports = authRouter;
+module.exports = _authrouter;

@@ -6,11 +6,11 @@ import bodyParser from "body-parser";
 
 import database from "./helpers/database";
 
-import productsController from './products/product-controller'
-
 import authenticateJWT from './middlewares/_auth'
 
 import authRouter from './routes/_auth'
+
+import productRouter from './routes/_product'
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 database();
 
-app.all('/api/v1/products', authenticateJWT, productsController);
+app.use('/api/v1/product', authenticateJWT, productRouter);
 
 app.use('/api/v1/auth', authRouter);
 
