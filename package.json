@@ -56,7 +56,9 @@
     "express-validator": "^6.2.0",
     "find-config": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.4"
+    "mongoose": "^5.9.4",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.4.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
