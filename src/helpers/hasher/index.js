@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
-const saltRounds = 10;
-
+import config from '../../config/config'
 export default function hashValue({
     password
 }) {
-    return bcrypt.hashSync(password, saltRounds);
+    return bcrypt.hashSync(password, config.saltRounds);
 }

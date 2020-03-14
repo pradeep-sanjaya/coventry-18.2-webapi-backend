@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../src/helpers/logger/index.js"],"names":["log"],"mappings":";;;;;;;AACe,SAASA,GAAT,GAAe,CAG7B","sourcesContent":["\nexport default function log() {\n\n\n}"],"file":"index.js"}

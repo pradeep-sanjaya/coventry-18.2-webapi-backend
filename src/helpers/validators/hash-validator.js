@@ -4,6 +4,4 @@ export default async function validatePasswordOfUser({
     hash
 }) {
     return bcrypt.compare(password, hash)
-
-
 }

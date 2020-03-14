@@ -1,27 +1,50 @@
 {
   "name": "coventry-18.2-webapi-backend",
   "version": "1.0.0",
-  "description": "A simple api to manage shopping cart and clothing store using express and mongo",
-  "main": "index.js",
+  "description": "Clothes Store backend API which invokes based on client on-demand requests to demonstrate behaviour of Shopping cart.",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prestart": "npm run -s build",
     "start": "node dist/index.js",
     "clean": "rimraf dist",
-    "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist && cp src/.env dist/.env",
+    "lint": "eslint --fix --config .eslintrc.json \"**/*.js\"",
+    "build": "npm run clean && mkdir -p dist && babel src -s -D -d dist",
     "watch": "nodemon -e js,ts --watch src --exec \"npm run build && npm run start\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://shashilaheshan@bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend.git"
+    "url": "git@bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend.git"
   },
   "keywords": [
-    "express",
-    "nodejs",
-    "clean"
+    "Shopping Cart",
+    "Clothes Store"
   ],
-  "author": "",
-  "license": "ISC",
+  "contributors": [
+    {
+      "name": "Aravinda Rathnayake",
+      "email": "aravindacloud@gmail.com",
+      "url": ""
+    },
+    {
+      "name": "Madura Dulanja",
+      "email": "madura12a@gmail.com",
+      "url": ""
+    },
+    {
+      "name": "Shashila Heshan",
+      "email": "ebayshashila@gmail.com",
+      "url": ""
+    },
+    {
+      "name": "Pradeep Sanjaya",
+      "email": "sanjayangp@gmail.com",
+      "url": ""
+    }
+  ],
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
   "homepage": "https://bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend#readme",
   "dependencies": {
     "bcrypt": "^4.0.1",
@@ -31,19 +54,20 @@
     "express": "^4.17.1",
     "find-config": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.4"
+    "mongoose": "^5.9.4",
+    "express-validator": "^6.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
     "@babel/register": "^7.8.6",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^23.6.0",
+    "babel-core": "^6.26.3",
     "faker": "^4.1.0",
-    "jest": "^23.6.0",
     "regenerator-runtime": "^0.13.1",
-    "rimraf": "^2.6.3"
+    "rimraf": "^3.0.2",
+    "eslint": "^6.8.0",
+    "nodemon": "^2.0.2"
   },
   "babel": {
     "presets": [

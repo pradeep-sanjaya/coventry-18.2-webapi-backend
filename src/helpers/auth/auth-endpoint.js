@@ -40,36 +40,45 @@ export default function makeAuthEndPointHanlder({
     };
     //Login single user and return access token
     async function loginUser(httpRequest) {
-        let user = await userList.findByUsername({
-            "username": httpRequest.body["username"]
-        })
-        let validPassword = await hashValidator({
-            "password": httpRequest.body["password"],
-            "hash": user.password
-        })
-
-        if (validPassword) {
-            let accessToken = await jwtHandler({
-                user
+        try{
+            let user = await userList.findByUsername({
+                "username": httpRequest.body["username"]
+            })
+            let validPassword = await hashValidator({
+                "password": httpRequest.body["password"],
+                "hash": user.password
             })
 
-            return response({
-                "response": {
-                    "success": true,
-                    "accessToken": accessToken
-                },
-                "code": 200,
-            });
-        } else {
+            if (validPassword) {
+                let accessToken = await jwtHandler({
+                    user
+                })
+
+                return response({
+                    "response": {
+                        "success": true,
+                        "accessToken": accessToken
+                    },
+                    "code": 200,
+                });
+            } else {
+                return response({
+                    "response": {
+                        "success": false,
+                        "error": "Invalid Credentials"
+                    },
+                    "code": 401
+                });
+            }
+        }catch (e) {
             return response({
                 "response": {
                     "success": false,
-                    "error": "Invalid Credentials"
+                    "error": e.toString()
                 },
                 "code": 401
             });
         }
-
     }
 
 

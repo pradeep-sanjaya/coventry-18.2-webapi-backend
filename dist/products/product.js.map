@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/products/product.js"],"names":["makeProduct","productInfo","Object","freeze"],"mappings":";;;;;;;AAAe,SAASA,WAAT,CACbC,WADa,EAEb;AACA,SAAOC,MAAM,CAACC,MAAP,CAAcF,WAAd,CAAP;AAED","sourcesContent":["export default function makeProduct(\n  productInfo\n) {\n  return Object.freeze(productInfo)\n\n}"],"file":"product.js"}

@@ -1,9 +1,11 @@
-var config = {};
+import dotenv from "dotenv";
+dotenv.config();
 
-config.DB_URL = process.env.MONGO_URL || null;
-
-config.PORT = process.env.WEB_PORT || 9090;
-
-config.JWT_SECRET_KEY = "abcdefghijklmnop1234567890"
+let config = {
+    databaseUrl: process.env.MONGODB_URL || null,
+    apiPort: process.env.WEB_PORT || 9090,
+    jwtSecret:process.env.JWT_SECRET_KEY,
+    saltRounds: process.env.BCRYPT_ROUNDS,
+};
 
 export default config;
