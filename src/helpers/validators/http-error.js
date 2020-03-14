@@ -1,3 +1,5 @@
+import * as statusMapper from '../utilities/http-error-status-mapper';
+
 export default function makeHttpError ({ statusCode, errorMessage }) {
     return {
       headers: {
@@ -5,8 +7,10 @@ export default function makeHttpError ({ statusCode, errorMessage }) {
       },
       statusCode,
       data: JSON.stringify({
-        success: false,
-        error: errorMessage
+        error: {
+          code: statusMapper.httpErrorStatusMapper(statusCode),
+          message: errorMessage
+        }
       })
     }
   }

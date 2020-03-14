@@ -7,6 +7,8 @@ import hasher from '../../helpers/hasher';
 import HttpResponseType from '../../models/http-response-type';
 import sendEmail from '../mail/mailer';
 
+import * as statusMapper from '../utilities/http-error-status-mapper'
+
 function response({
 	response,
 	code
@@ -68,20 +70,16 @@ export default function makeAuthEndPointHandler({
 				});
 			} else {
 				return response({
-					'response': {
-						'success': false,
-						'error': 'Invalid Credentials'
-					},
-					'code': HttpResponseType.AUTH_REQUIRED
+					'error': {
+						'code': statusMapper.httpErrorStatusMapper(HttpResponseType.AUTH_REQUIRED),
+						'error': 'Invalid credentials'
+					}
 				});
 			}
-		} catch (e) {
-			return response({
-				'response': {
-					'success': false,
-					'error': e.toString()
-				},
-				'code': HttpResponseType.AUTH_REQUIRED
+		} catch (error) {
+			return makeHttpError({
+				statusCode: HttpResponseType.AUTH_REQUIRED,
+				errorMessage: error.message
 			});
 		}
 	}
@@ -109,12 +107,14 @@ export default function makeAuthEndPointHandler({
 			let accessToken = await jwtHandler({
 				user
 			});
+
 			await sendEmail({
 				'from': 'web-api@nibm.lk',
 				'to': user.email,
 				'subject': 'Registration Successful.',
 				'text': 'Registration successful. Thanks for choosing our store.'
 			});
+
 			return response({
 				'response': {
 					'success': true,
@@ -123,12 +123,11 @@ export default function makeAuthEndPointHandler({
 				'code': HttpResponseType.SUCCESS,
 			});
 
-		} catch (e) {
+		} catch (error) {
 			return makeHttpError({
 				statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
-				errorMessage: `${e}.`
+				errorMessage: error.message
 			});
-
 		}
 	}
 }
