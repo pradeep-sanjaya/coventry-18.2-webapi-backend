@@ -2,7 +2,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import config from './config/config';
 
 const options = {
-	apis: ['./routes/*.js'],
+	apis: ['src/routes/*.js'],
 	basePath: '/',
 	host: `localhost:${config.apiPort}`,
 	swaggerDefinition: {
