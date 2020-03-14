@@ -7,4 +7,3 @@ export default function normalizeRequest (req = {}) {
       body: req.body
     })
   }
-  

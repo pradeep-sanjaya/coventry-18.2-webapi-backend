@@ -104,7 +104,7 @@ export default function makeAuthEndPointHandler({
 				user
 			});
 			await sendEmail({
-				'from': 'webapi@gmail.com',
+				'from': 'web-api@nibm.lk',
 				'to': user.email,
 				'subject': 'Registration Successful.',
 				'text': 'Registration successful. Thanks for choosing our store.'

@@ -1,12 +1,13 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import config from './config/config';
 
 const options = {
 	apis: ['./routes/*.js'],
 	basePath: '/',
+	host: `localhost:${config.apiPort}`,
 	swaggerDefinition: {
 		info: {
 			description: 'Automated API Documentation for Clothes store',
-			swagger: '2.0',
 			title: 'Backend API Documentation',
 			version: '1.0.0',
 		}

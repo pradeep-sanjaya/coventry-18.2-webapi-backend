@@ -1,13 +1,13 @@
-import initDb from '../database'
-import makeUserList from '../../users/users-list'
-import makeAuthEndPointHandler from './auth-endpoint'
+import initDb from '../database';
+import makeUserList from '../../users/users-list';
+import makeAuthEndPointHandler from './auth-endpoint';
 
 const database = initDb();
 const userList = makeUserList({
-    database
+	database
 });
 const authEndpointHandler = makeAuthEndPointHandler({
-    userList
+	userList
 });
 
-export default authEndpointHandler
+export default authEndpointHandler;
