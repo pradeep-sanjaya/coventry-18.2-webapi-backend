@@ -1,10 +1,10 @@
-import handleProductRequest from './'
+import handleUsersRequest from './'
 
 import normalizedRequest from '../helpers/normalize-request'
 
-export default function productsController(req, res) {
+export default function usersController(req, res) {
     const httpRequest = normalizedRequest(req)
-    handleProductRequest(httpRequest)
+    handleUsersRequest(httpRequest)
         .then(({
                 headers,
                 statusCode,
@@ -15,5 +15,5 @@ export default function productsController(req, res) {
             .status(statusCode)
             .send(data)
         )
-        .catch(e => res.status(500).send(e))
+        .catch(e => res.status(500).end())
 }

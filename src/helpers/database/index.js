@@ -4,7 +4,7 @@ import config from "../../config/config";
 
 export default async function makeDb() {
 
-  mongoose.connect(process.env.MONGO_URL, {
+  mongoose.connect("mongodb://127.0.0.1:27017", {
 
     useNewUrlParser: true
 

@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/users/user.js"],"names":["makeUser","userInfo","Object","freeze"],"mappings":";;;;;;;AAAe,SAASA,QAAT,CACbC,QADa,EAEb;AACA,SAAOC,MAAM,CAACC,MAAP,CAAcF,QAAd,CAAP;AAED","sourcesContent":["export default function makeUser(\n  userInfo\n) {\n  return Object.freeze(userInfo)\n\n}"],"file":"user.js"}

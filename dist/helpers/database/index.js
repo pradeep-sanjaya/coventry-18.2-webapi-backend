@@ -12,7 +12,7 @@ var _config = _interopRequireDefault(require("../../config/config"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 async function makeDb() {
-  _mongoose.default.connect(process.env.MONGO_URL, {
+  _mongoose.default.connect("mongodb://127.0.0.1:27017", {
     useNewUrlParser: true
   });
 
