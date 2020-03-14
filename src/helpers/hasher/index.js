@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
+import config from '../../config/config';
+
 export default function hashValue({
-    password
+	password
 }) {
-    return bcrypt.hashSync(password,10);
+	return bcrypt.hashSync(password, config.saltRounds);
 }

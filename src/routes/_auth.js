@@ -7,7 +7,7 @@ _authrouter.post('/login', function (req, res, next) {
     authController(req,res)
 });
 
-/* GET users register. */
+/* POST users register. */
 _authrouter.post('/register', function (req, res, next) {
     authController(req,res)
 });

@@ -1,6 +1,6 @@
 import makeHttpError from "../helpers/validators/http-error";
 import hashValue from '../helpers/hasher'
-import {METHOD_NOT_ALLOWED, MISDIRECTED_REQUEST, SUCCESS} from "../helpers/http-request/response";
+import HttpResponseType from '../models/http-response-type';
 
 export default function makeUsersEndpointHandler({
   userList
@@ -15,7 +15,7 @@ export default function makeUsersEndpointHandler({
 
       default:
         return makeHttpError({
-          statusCode: METHOD_NOT_ALLOWED,
+          statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
           errorMessage: `${httpRequest.method} method not allowed.`
         });
     }
@@ -24,19 +24,19 @@ export default function makeUsersEndpointHandler({
   async function getUser(httpRequest) {
     const {
       id
-    } = httpRequest.pathParams || {}
+    } = httpRequest.pathParams || {};
     const {
       max,
       before,
       after
-    } = httpRequest.queryParams || {}
+    } = httpRequest.queryParams || {};
 
 
     return {
       headers: {
         "Content-Type": "application/json"
       },
-      statusCode: SUCCESS,
+      statusCode: HttpResponseType.SUCCESS,
       data: JSON.stringify({})
     };
   }
@@ -47,7 +47,7 @@ export default function makeUsersEndpointHandler({
     role
   }) {
     try {
-      var result = await userList.add({
+      let result = await userList.add({
         "user": {
           username,
           "password": hashValue({
@@ -55,12 +55,12 @@ export default function makeUsersEndpointHandler({
           }),
           role
         }
-      })
+      });
       return {
         headers: {
           "Content-Type": "application/json"
         },
-        statusCode: SUCCESS,
+        statusCode: HttpResponseType.SUCCESS,
         data: {
           result
         }
@@ -71,7 +71,7 @@ export default function makeUsersEndpointHandler({
     }) {
 
       return makeHttpError({
-        statusCode: MISDIRECTED_REQUEST,
+        statusCode: HttpResponseType.MISDIRECTED_REQUEST,
         errorMessage: `${errmsg}.`
       });
 
