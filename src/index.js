@@ -1,18 +1,15 @@
 import express from 'express';
-
 import bodyParser from 'body-parser';
 
 import config from './config/config';
 
 import database from './helpers/database';
 
-import authenticateJWT from './middlewares/_auth';
+import authenticateJWT from './middlewares/auth';
 
-import authRouter from './routes/_auth';
-
-import productRouter from './routes/_product';
-
-import apiDocsRouter from './routes/_api-docs';
+import authRouter from './routes/auth';
+import productRouter from './routes/product';
+import apiDocsRouter from './routes/api-docs';
 
 const app = express();
 

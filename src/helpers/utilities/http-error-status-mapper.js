@@ -1,4 +1,4 @@
-exports.httpErrorStatusMapper = function (statusCode) {
+exports.httpErrorStatusMapper = (statusCode) => {
 	switch (statusCode) {
 	case 400:
 		return 'CS-4000';
