@@ -37,6 +37,9 @@ export default function makeAuthEndPointHandler({
 		case '/register':
 			return registerUser(httpRequest);
 
+		case '/send_email':
+			return sendCustomerEmail(httpRequest);
+
 		default:
 			return makeHttpError({
 				statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -63,8 +66,7 @@ export default function makeAuthEndPointHandler({
 
 				return response({
 					'response': {
-						'success': true,
-						'accessToken': accessToken
+						'success': true
 					},
 					'code': HttpResponseType.SUCCESS,
 				});
@@ -119,6 +121,32 @@ export default function makeAuthEndPointHandler({
 				'response': {
 					'success': true,
 					'accessToken': accessToken
+				},
+				'code': HttpResponseType.SUCCESS,
+			});
+
+		} catch (error) {
+			return makeHttpError({
+				statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
+				errorMessage: error.message
+			});
+		}
+	}
+
+	async function sendCustomerEmail(httpRequest) {
+		try {
+
+			await sendEmail({
+				'from': httpRequest.body.sender,
+				'to': process.env.ADMIN_EMAIL,
+				'subject': httpRequest.body.subject,
+				'text': httpRequest.body.text
+			});
+
+			return response({
+				'response': {
+					'success': true,
+					'accessToken': "accessToken"
 				},
 				'code': HttpResponseType.SUCCESS,
 			});

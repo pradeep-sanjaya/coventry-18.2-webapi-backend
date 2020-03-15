@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+var cors = require('cors')
 
 import config from './config/config';
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 
 database();
 
+app.use(cors());
 app.use('/api/v1/product', authenticateJWT, productRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/', apiDocsRouter);

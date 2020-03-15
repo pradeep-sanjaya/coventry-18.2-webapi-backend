@@ -12,4 +12,8 @@ authRouter.post('/register',  (req, res, next) => {
 	authController(req,res);
 });
 
+authRouter.post('/send_email',  (req, res, next) => {
+	authController(req,res);
+});
+
 module.exports = authRouter;
