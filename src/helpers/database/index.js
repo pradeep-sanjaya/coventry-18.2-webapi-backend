@@ -4,20 +4,23 @@ import config from '../../config/config';
 import logger from '../logger';
 
 export default async function makeDb() {
-	mongoose.connect(config.databaseUrl, {
+	const dbUrl = `${config.databaseUrl}/${config.databaseName}`;
+
+	mongoose.connect(dbUrl, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	}).then(() => {
-		logger().info(`Connected to  ${config.databaseUrl}`);
+		logger().info(`Connected to  ${dbUrl}`);
 
-		console.log('Connected to %s', config.databaseUrl);
+		console.log('Connected to %s', dbUrl);
 		console.log('Backend is up and running... \n');
-	}).catch(err => {
-		logger().info(`App starting error:  ${err.message}`);
-		console.error('App starting error:', err.message);
+	}).catch((error) => {
+		logger().info(`App starting error:  ${error.message}`);
+		console.error('App starting error:', error.message);
 
 		process.exit(1);
 	});
+
 	let database = mongoose.connection;
 
 	database.once('open', () => console.log('Connected to the database'));

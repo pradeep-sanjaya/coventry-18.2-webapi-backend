@@ -5,6 +5,6 @@ import * as specs from '../swagger';
 
 let apiDocsRouter = express.Router();
 
-apiDocsRouter.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs.default));
+apiDocsRouter.use('/', swaggerUi.serve, swaggerUi.setup(specs.default));
 
 module.exports = apiDocsRouter;
