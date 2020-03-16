@@ -81,7 +81,7 @@ export default async function handle(req, res) {
 	};
 
 	async function sendForgetPassword(obj) {
-		sendEmail_2(email);
+		sendEmail(email);
 		
 	};
 
