@@ -2,6 +2,7 @@ import handleAuthRequest from './';
 
 import normalizedRequest from '../normalize-request';
 import HttpResponseType from '../../models/http-response-type';
+import { successResponse, successResponseWithData, errorResponse } from '../response/response-dispatcher';
 
 export default function authController(req, res) {
 	const httpRequest = normalizedRequest(req);
@@ -9,13 +10,20 @@ export default function authController(req, res) {
 	handleAuthRequest(httpRequest)
 		.then(({
 			headers,
-			statusCode,
 			data
-		}) =>
-			res
-				.set(headers)
-				.status(statusCode)
-				.send(data)
-		)
-		.catch(e => res.status(HttpResponseType.INTERNAL_SERVER_ERROR).end());
+		}) => {
+			if (data.status) {
+				switch (httpRequest.path) {
+				case '/login':
+					return successResponseWithData(res, data, headers);
+				case '/register':
+					return successResponse(res, data.message, headers);
+				}
+			} else {
+				return errorResponse(res, data.code, data.message);
+			}
+		})
+		.catch((error) => {
+			errorResponse(res, HttpResponseType.INTERNAL_SERVER_ERROR, error.message);
+		});
 }

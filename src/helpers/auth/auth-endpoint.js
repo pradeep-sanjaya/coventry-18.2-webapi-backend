@@ -1,4 +1,3 @@
-import makeHttpError from '../validators/http-error';
 import hashValidator from '../validators/hash-validator';
 
 import jwtHandler from '../../helpers/validators/token-handler';
@@ -7,21 +6,10 @@ import hasher from '../../helpers/hasher';
 import HttpResponseType from '../../models/http-response-type';
 import sendEmail from '../mail/mailer';
 
-import * as statusMapper from '../utilities/http-error-status-mapper';
-
-function response({
-	response,
-	code
-}) {
+function objectHandler(data) {
 	return {
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		statusCode: code,
-		data: JSON.stringify({
-			response
-		}
-		)
+		headers: { 'Content-Type': 'application/json' },
+		data: data
 	};
 }
 
@@ -31,21 +19,17 @@ export default function makeAuthEndPointHandler({
 	return async function handle(httpRequest) {
 		switch (httpRequest.path) {
 		case '/login':
-			return loginUser(
-				httpRequest
-			);
+			return loginUser(httpRequest);
 		case '/register':
 			return registerUser(httpRequest);
-
 		default:
-			return makeHttpError({
-				statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
-				errorMessage: `${httpRequest.method} method not allowed.`
+			return objectHandler({
+				code: HttpResponseType.METHOD_NOT_ALLOWED,
+				message: `${httpRequest.method} method not allowed`
 			});
 		}
 	};
 
-	//Login single user and return access token
 	async function loginUser(httpRequest) {
 		try {
 			let user = await userList.findByUsername({
@@ -61,72 +45,69 @@ export default function makeAuthEndPointHandler({
 					user
 				});
 
-				return response({
-					'response': {
-						'success': true,
-						'accessToken': accessToken
+				return objectHandler({
+					status: HttpResponseType.SUCCESS,
+					data: {
+						accessToken: accessToken
 					},
-					'code': HttpResponseType.SUCCESS,
+					message: 'Login successful'
 				});
 			} else {
-				return response({
-					'error': {
-						'code': statusMapper.httpErrorStatusMapper(HttpResponseType.AUTH_REQUIRED),
-						'error': 'Invalid credentials'
-					}
+				return objectHandler({
+					code: HttpResponseType.AUTH_REQUIRED,
+					message: 'Invalid credentials'
 				});
 			}
 		} catch (error) {
-			return makeHttpError({
-				statusCode: HttpResponseType.AUTH_REQUIRED,
-				errorMessage: error.message
+			return objectHandler({
+				code: HttpResponseType.AUTH_REQUIRED,
+				message: error.message
 			});
 		}
 	}
 
-	//Register single user and return access token
 	async function registerUser(httpRequest) {
 		try {
-			let user = await userList.add({
-				'user': {
-					'username': httpRequest.body['username'],
-					'password': hasher({
-						'password': httpRequest.body['password'],
+			const body = httpRequest.body;
+			if (body) {
+				const userObj = {
+					username: body['username'],
+					password: hasher({
+						password: body['password'],
 					}),
-					'email': httpRequest.body['email'],
-					'role': httpRequest.body['role'],
-					'contactNumber': httpRequest.body['contactNumber'],
-					'gender': httpRequest.body['gender'],
-					'firstName': httpRequest.body['firstName'],
-					'lastName': httpRequest.body['lastName'],
-					'questionId': httpRequest.body['questionId'],
-					'answer': httpRequest.body['answer']
-				}
-			});
+					email: body['email'],
+					role: body['role'],
+					contactNumber: body['contactNumber'],
+					gender: body['gender'],
+					firstName: body['firstName'],
+					lastName: body['lastName'],
+					questionId: body['questionId'],
+					answer: body['answer']
+				};
 
-			let accessToken = await jwtHandler({
-				user
-			});
+				let user = await userList.add(userObj);
 
-			await sendEmail({
-				'from': 'web-api@nibm.lk',
-				'to': user.email,
-				'subject': 'Registration Successful.',
-				'text': 'Registration successful. Thanks for choosing our store.'
-			});
+				await sendEmail({
+					from: 'web-api@nibm.lk',
+					to: user.email,
+					subject: 'Registration Successful',
+					text: 'Registration successful. Thanks for choosing our store.'
+				});
 
-			return response({
-				'response': {
-					'success': true,
-					'accessToken': accessToken
-				},
-				'code': HttpResponseType.SUCCESS,
-			});
-
+				return objectHandler({
+					status: HttpResponseType.SUCCESS,
+					message: `${user.role} account created successful`
+				});
+			} else {
+				return objectHandler({
+					code: HttpResponseType.CLIENT_ERROR,
+					message: 'Request body does not contain a body'
+				});
+			}
 		} catch (error) {
-			return makeHttpError({
-				statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
-				errorMessage: error.message
+			return objectHandler({
+				code: HttpResponseType.CLIENT_ERROR,
+				message: error.message
 			});
 		}
 	}
