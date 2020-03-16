@@ -11,9 +11,7 @@ export default function makeUserList({
 		update
 	});
 
-	async function add({
-		user
-	}) {
+	async function add(user) {
 		let userObj = new User(user);
 		return userObj.save();
 	}
