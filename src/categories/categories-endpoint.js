@@ -1,21 +1,19 @@
 import makeHttpError from '../helpers/validators/http-error';
 import HttpResponseType from '../models/http-response-type';
 
-export default function makeProductsEndpointHandler({
-    productList
+export default function makeCategoriesEndpointHandler({
+    categoryList
 }) {
     return async function handle(httpRequest) {
-
         switch (httpRequest.method) {
-
         case 'POST':
-            return postProduct(httpRequest);
+            return addCategory(httpRequest);
 
         case 'GET':
-            return getProducts(httpRequest);
+            return getCategories(httpRequest);
 
         case 'DELETE':
-            return deleteProduct(httpRequest);
+            return deleteCategory(httpRequest);
 
         default:
             return makeHttpError({
@@ -23,13 +21,29 @@ export default function makeProductsEndpointHandler({
                 errorMessage: `${httpRequest.method} method not allowed.`
             });
         }
-
     };
 
-    async function getProducts(httpRequest) {
+    async function addCategory(httpRequest) {
+        let result = await categoryList.add({
+            'category': httpRequest.body
+        });
+
+        return {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            statusCode: HttpResponseType.SUCCESS,
+            data: {
+                result
+            }
+        };
+    }
+
+    async function getCategories(httpRequest) {
         const {
             id
         } = httpRequest.pathParams || {};
+
         const {
             max,
             before,
@@ -37,9 +51,9 @@ export default function makeProductsEndpointHandler({
         } = httpRequest.queryParams || {};
         let result = null;
         if (!id) {
-            result = await await productList.getProducts();
+            result = await categoryList.getCategories();
         } else {
-            result = await productList.findProductById({
+            result = await categoryList.findCategoryById({
                 id
             });
         }
@@ -53,32 +67,11 @@ export default function makeProductsEndpointHandler({
             })
         };
     }
-
-    async function postProduct(httpRequest) {
-        let result = await productList.add({
-            'product': httpRequest.body
-        });
-
-        return {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            statusCode: HttpResponseType.SUCCESS,
-            data: {
-                result
-            }
-
-        };
-
-    }
-    async function deleteProduct(httpRequest) {
+    async function deleteCategory(httpRequest) {
         const {
             id
         } = httpRequest.pathParams || {};
-
-        let result = await productList.remove({
-            id
-        });
+        let result = await categoryList.remove({id});
         return {
             headers: {
                 'Content-Type': 'application/json'

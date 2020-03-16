@@ -1,13 +1,9 @@
-import initDb from '../helpers/database';
 import makeProductList from './product-list';
 import makeContactsEndpointHandler from './products-endpoint';
 
-const database =  initDb();
-const productList = makeProductList({
-	database
-});
+const productList = makeProductList();
 const productsEndpointHandler = makeContactsEndpointHandler({
-	productList
+    productList
 });
 
 export default productsEndpointHandler;

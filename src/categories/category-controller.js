@@ -1,11 +1,10 @@
-import handleUsersRequest from './';
-
+import handleCategoryRequest from './';
 import normalizedRequest from '../helpers/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 
-export default function usersController(req, res) {
+export default function categoryController(req, res) {
     const httpRequest = normalizedRequest(req);
-    handleUsersRequest(httpRequest)
+    handleCategoryRequest(httpRequest)
         .then(({
             headers,
             statusCode,
@@ -16,5 +15,5 @@ export default function usersController(req, res) {
                 .status(statusCode)
                 .send(data)
         )
-        .catch(e => res.status(HttpResponseType.INTERNAL_SERVER_ERROR).end());
+        .catch(e => res.status(HttpResponseType.INTERNAL_SERVER_ERROR).send(e));
 }
