@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 
 export default function hashValue({
-	password
+    password
 }) {
-	return bcrypt.hashSync(password, 10);
+    return bcrypt.hashSync(password, 10);
 }

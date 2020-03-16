@@ -1,3 +1,3 @@
 export default function makeProduct(
-	productInfo
+    productInfo
 ) { return Object.freeze(productInfo); }

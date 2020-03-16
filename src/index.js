@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 
 import config from './config/config';
 
-import database from './helpers/database';
+import initializeDB from './helpers/database';
 
 import authenticateJWT from './middlewares/auth';
 
@@ -15,9 +15,9 @@ const app = express();
 
 app.use(bodyParser.json());
 
-database();
+initializeDB();
 
-app.use('/api/v1/product', authenticateJWT, productRouter);
+app.use('/api/v1/products', authenticateJWT, productRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api-docs', apiDocsRouter);
 
