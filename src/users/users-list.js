@@ -9,9 +9,7 @@ export default function makeUserList() {
         update
     });
 
-    async function add({
-        user
-    }) {
+    async function add(user) {
         let userObj = new User(user);
         return userObj.save();
     }
@@ -24,8 +22,8 @@ export default function makeUserList() {
         });
     }
 
-    async function remove({id}) {
-        return User.remove({_id:id});
+    async function remove({}) {
+
     }
 
     // todo:

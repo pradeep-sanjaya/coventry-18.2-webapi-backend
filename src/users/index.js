@@ -1,11 +1,7 @@
-import initDb from '../helpers/database';
 import makeUserList from './users-list';
 import makeUsersEndpointHandler from './users-endpoint';
 
-const database =  initDb();
-const userList = makeUserList({
-    database
-});
+const userList = makeUserList();
 const usersEndpointHandler = makeUsersEndpointHandler({
     userList
 });

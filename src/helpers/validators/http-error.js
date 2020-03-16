@@ -5,7 +5,7 @@ export default function makeHttpError ({ statusCode, errorMessage }) {
         headers: {
             'Content-Type': 'application/json'
         },
-        statusCode,
+        statusCode: statusCode,
         data: JSON.stringify({
             error: {
                 code: statusMapper.httpErrorStatusMapper(statusCode),

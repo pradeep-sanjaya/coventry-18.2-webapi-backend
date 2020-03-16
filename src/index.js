@@ -21,6 +21,6 @@ database();
 app.use('/api/v1/product', authenticateJWT, productRouter);
 app.use('/api/v1/category', authenticateJWT, categoryRouter);
 app.use('/api/v1/auth', authRouter);
-app.use('/', apiDocsRouter);
+app.use('/api-docs', apiDocsRouter);
 
 app.listen(config.apiPort, () => console.log(`Listening on port ${config.apiPort}`));
