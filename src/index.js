@@ -1,6 +1,5 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-var cors = require('cors')
 
 import config from './config/config';
 
@@ -9,6 +8,7 @@ import database from './helpers/database';
 import authenticateJWT from './middlewares/auth';
 
 import authRouter from './routes/auth';
+import mailRouter from './routes/mail';
 import productRouter from './routes/product';
 import apiDocsRouter from './routes/api-docs';
 
@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 
 database();
 
-app.use(cors());
 app.use('/api/v1/product', authenticateJWT, productRouter);
+app.use('/api/v1/mail', mailRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/', apiDocsRouter);
 
