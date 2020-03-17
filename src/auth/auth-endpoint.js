@@ -1,10 +1,10 @@
-import hashValidator from '../validators/hash-validator';
+import hashValidator from '../helpers/validators/hash-validator';
 
-import jwtHandler from '../../helpers/validators/token-handler';
-import hasher from '../../helpers/hasher';
+import jwtHandler from '../helpers/validators/token-handler';
+import hasher from '../helpers/hasher';
 
-import HttpResponseType from '../../models/http-response-type';
-import sendEmail from '../mail/mailer';
+import HttpResponseType from '../models/http-response-type';
+import sendEmail from '../helpers/mail/mailer';
 
 function objectHandler(data) {
     return {
@@ -32,35 +32,49 @@ export default function makeAuthEndPointHandler({
 
     async function loginUser(httpRequest) {
         try {
-            let user = await userList.findByUsername({
-                'username': httpRequest.body['username']
-            });
-            let validPassword = await hashValidator({
-                'password': httpRequest.body['password'],
-                'hash': user.password
-            });
+            let validPassword = false;
+            const body = httpRequest.body;
 
-            if (validPassword) {
-                let accessToken = await jwtHandler({
-                    user
+            if (body) {
+                let user = await userList.findByUsername({
+                    'username': httpRequest.body['username']
                 });
 
-                return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: {
-                        accessToken: accessToken
-                    },
-                    message: 'Login successful'
-                });
+                if (user) {
+                    validPassword = await hashValidator({
+                        'password': httpRequest.body['password'],
+                        'hash': user.password
+                    });
+                }
+
+                if (validPassword) {
+                    let accessToken = await jwtHandler({
+                        user
+                    });
+
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: {
+                            accessToken: accessToken
+                        },
+                        message: 'Login successful'
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: 'Invalid username or password'
+                    });
+                }
             } else {
                 return objectHandler({
-                    code: HttpResponseType.AUTH_REQUIRED,
-                    message: 'Invalid credentials'
+                    code: HttpResponseType.CLIENT_ERROR,
+                    message: 'Request body does not contain a body'
                 });
             }
+
         } catch (error) {
             return objectHandler({
-                code: HttpResponseType.AUTH_REQUIRED,
+                code: HttpResponseType.CLIENT_ERROR,
                 message: error.message
             });
         }
@@ -85,7 +99,7 @@ export default function makeAuthEndPointHandler({
                     answer: body['answer']
                 };
 
-                let user = await userList.add(userObj);
+                let user = await userList.addUser(userObj);
 
                 await sendEmail({
                     from: 'web-api@nibm.lk',

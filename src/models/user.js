@@ -12,8 +12,8 @@ let userSchema = UserSchema({
         type: String,
         required: true,
         unique: true,
-        minlength: 9,
-        maxlength: 9
+        minlength: 10,
+        maxlength: 10
     },
     gender: {
         type: String,

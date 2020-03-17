@@ -5,24 +5,16 @@ const ProductSchema = mongoose.Schema;
 let productSchema = ProductSchema({
     style: {
         type: String,
-        enum: ['Men', 'Women','Unisex'],
+        enum: ['Men', 'Women', 'Unisex'],
         required: true
     },
     productName: {
         type: String,
+        unique: true,
         required: true
     },
     category: {
         type: String,
-        enum: [
-            'Shirts',
-            'T-Shirts',
-            'Trunks',
-            'Trousers',
-            'Jeans',
-            'Shorts',
-            'Skirts',
-            'Tops'],
         required: true
     },
     availableQty: {

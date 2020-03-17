@@ -1,7 +1,8 @@
-import handleAuthRequest from './';
-import normalizedRequest from '../normalize-request';
-import HttpResponseType from '../../models/http-response-type';
-import { successResponse, successResponseWithData, errorResponse } from '../response/response-dispatcher';
+import handleAuthRequest from './index';
+
+import normalizedRequest from '../helpers/utilities/normalize-request';
+import HttpResponseType from '../models/http-response-type';
+import { successResponse, successResponseWithData, errorResponse } from '../helpers/response/response-dispatcher';
 
 export default function authController(req, res) {
     const httpRequest = normalizedRequest(req);

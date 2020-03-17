@@ -4,17 +4,17 @@ import categoryController from '../categories/category-controller';
 let categoryRouter = express.Router();
 
 /* GET categories. */
-categoryRouter.get('/', function (req, res, next) {
+categoryRouter.get('/', (req, res) => {
     categoryController(req, res);
 });
 
 /* GET category by id. */
-categoryRouter.all('/:id', function (req, res, next) {
+categoryRouter.all('/:id', (req, res) => {
     categoryController(req, res);
 });
 
 /* POST categories. */
-categoryRouter.post('/', function (req, res, next) {
+categoryRouter.post('/', (req, res) => {
     categoryController(req, res);
 });
 

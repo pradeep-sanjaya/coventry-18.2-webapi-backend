@@ -1,8 +1,6 @@
 import sgMail from '@sendgrid/mail';
 import config from '../../config/config';
-import express from 'express';
-import normalizedRequest from '../normalize-request';
-import HttpResponseType from '../../models/http-response-type';
+import normalizedRequest from '../../helpers/utilities/normalize-request';
 
 function response({
     response,
@@ -15,11 +13,9 @@ function response({
         statusCode: code,
         data: JSON.stringify({
             response
-        }
-        )
+        })
     };
 }
-
 
 export default async function handle(req, res) {
 
@@ -27,17 +23,18 @@ export default async function handle(req, res) {
 
     switch (httpRequest.path) {
     case '/userresponse':
-        let respond = await sendUserResponse(
-            httpRequest.body
-        );
-        res.send(respond);
-    case '/send_email':
-        respond = await sendInvoice(
-            httpRequest.body
-        );
-        res.send(respond);
-    default:
+        await sendUserResponse(httpRequest.body).then((response) => {
+            res.send(response);
+        });
 
+        break;
+    case '/send_email':
+        await sendInvoice(httpRequest.body).then((response) => {
+            res.send(response);
+        });
+        break;
+    default:
+        break;
     }
 
     async function sendEmail(email) {
@@ -51,17 +48,17 @@ export default async function handle(req, res) {
         };
         await sgMail.send(msg);
 
-        let respondObj =  response({
+        return response({
             'response': {
                 'success': true
             },
-            'code':'1',
+            'code': '1',
         });
-        return respondObj;
     }
 
-    async function sendUserResponse(req,res) {
-        try{
+    // eslint-disable-next-line no-unused-vars
+    async function sendUserResponse(req, res) {
+        try {
             let email = {
                 to: process.env.ADMIN_EMAIL,
                 from: req.sender,
@@ -70,19 +67,19 @@ export default async function handle(req, res) {
                 html: req.text
             };
             return sendEmail(email);
-        }catch(e){
+        } catch (e) {
             return e;
         }
 
     }
 
-    async function sendInvoice(req,res) {
+    // eslint-disable-next-line no-unused-vars
+    async function sendInvoice(req, res) {
 
     }
 
+    // eslint-disable-next-line no-unused-vars
     async function sendForgetPassword(obj) {
-        sendEmail(email);
-
+        sendEmail(obj);
     }
-
 }

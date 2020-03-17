@@ -6,29 +6,15 @@ let categorySchema = CategorySchema({
     category: {
         type: String,
         unique: true,
-        enum: [
-            'Shirts',
-            'T-Shirts',
-            'Trunks',
-            'Trousers',
-            'Jeans',
-            'Shorts',
-            'Skirts',
-            'Tops'
-        ],
-        required: true
-    },
-    imageUrl: {
-        type: String,
         required: true
     },
     style: {
         type: String,
-        enum: [
-            'Men',
-            'Women',
-            'Unisex'
-        ],
+        required: true,
+        enum: ['Men', 'Women', 'Unisex']
+    },
+    imageUrl: {
+        type: String,
         required: true
     },
     status: {

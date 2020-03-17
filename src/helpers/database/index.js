@@ -3,12 +3,13 @@ import mongoose from 'mongoose';
 import config from '../../config/config';
 import logger from '../logger';
 
-export default async function makeDb() {
+export default async function initializeDB() {
     const dbUrl = `${config.databaseUrl}/${config.databaseName}`;
 
     mongoose.connect(dbUrl, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useCreateIndex: true
     }).then(() => {
         logger().info(`Connected to  ${dbUrl}`);
 

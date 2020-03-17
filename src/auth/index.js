@@ -1,7 +1,7 @@
-import makeUserList from '../../users/users-list';
+import makeAuthList from './auth-list';
 import makeAuthEndPointHandler from './auth-endpoint';
 
-const userList = makeUserList();
+const userList = makeAuthList();
 const authEndpointHandler = makeAuthEndPointHandler({
     userList
 });

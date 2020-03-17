@@ -2,86 +2,65 @@ import Product from '../models/product';
 
 export default function makeProductList() {
     return Object.freeze({
-        add,
+        addProduct,
+        getAllProducts,
         findProductById,
-        getProducts,
-        remove,
-        replace,
-        update
+        removeProduct,
+        replaceProduct,
+        updateProduct
     });
 
-    async function getProducts({
-        max = 100,
-        before,
-        after
-    } = {}) {
+    async function getAllProducts() {
         try {
-            return Product.find({}).then(function (storedDataArray) {
-                return storedDataArray;
-            }).catch(function (err) {
-                if (err) {
-                    throw new Error(err.message);
-                }
+            return Product.find().then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
             });
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            return error;
         }
+    }
 
+    async function addProduct(product) {
+        try {
+            return new Product(product).save();
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function findProductById(id) {
+        try {
+            return Product.find({
+                _id: id
+            }).then((product) => {
+                return product;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function removeProduct(id) {
+        try {
+            return Product.deleteOne({ _id: id }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    // todo:
+    async function replaceProduct() {
+    }
+
+    // todo:
+    async function updateProduct() {
     }
 }
-
-async function add({
-    product
-}) {
-    let pro = new Product(product);
-    return pro.save();
-}
-
-async function findProductById({
-    id
-}) {
-    try {
-        return Product.find({
-            _id: id
-        }).then(function (product) {
-            return product;
-        }).catch(function (err) {
-            if (err) {
-                return {
-                    success: false,
-                    message: 'Invalid Product ID'
-                };
-            }
-        });
-    } catch (e) {
-        return {
-            success: false,
-            message: 'Invalid Product ID'
-        };
-    }
-}
-
-async function remove({id}) {
-    try {
-        return Product.remove({_id:id}).then(function (success) {
-            if(success){
-                return {
-                    success:true,
-                    message:'Product deleted successfully'
-                };
-            }
-        }).catch(function (err) {
-            if (err) {
-                return err.message;
-            }
-        });
-    } catch (e) {
-        return e.message;
-    }
-}
-
-// todo:
-async function replace() {}
-
-// todo:
-async function update() {}

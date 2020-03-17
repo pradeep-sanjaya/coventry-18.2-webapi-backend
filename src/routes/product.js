@@ -3,18 +3,17 @@ import productController from '../products/product-controller';
 
 let productRouter = express.Router();
 
-/* GET products . */
-productRouter.get('/', function (req, res, next) {
+productRouter.get('/', (req, res) => {
     productController(req, res);
 });
 
 /* GET product by id. */
-productRouter.all('/:id', function (req, res, next) {
+productRouter.all('/:id', (req, res) => {
     productController(req, res);
 });
 
 /* POST users register. */
-productRouter.post('/', function (req, res, next) {
+productRouter.post('/', (req, res) => {
     productController(req, res);
 });
 

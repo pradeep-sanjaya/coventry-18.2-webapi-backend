@@ -1,19 +1,23 @@
 import handleProductRequest from './';
-import normalizedRequest from '../helpers/normalize-request';
+import normalizedRequest from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
+import { successResponseWithData, errorResponse } from '../helpers/response/response-dispatcher';
 
 export default function productsController(req, res) {
     const httpRequest = normalizedRequest(req);
     handleProductRequest(httpRequest)
         .then(({
             headers,
-            statusCode,
             data
-        }) =>
-            res
-                .set(headers)
-                .status(statusCode)
-                .send(data)
+        }) => {
+            if (data.status) {
+                successResponseWithData(res, data, headers);
+            } else {
+                errorResponse(res, data.code, data.message);
+            }
+        }
         )
-        .catch(e => res.status(HttpResponseType.INTERNAL_SERVER_ERROR).send(e));
+        .catch((error) => {
+            errorResponse(res, HttpResponseType.INTERNAL_SERVER_ERROR, error.message);
+        });
 }
