@@ -1,6 +1,6 @@
 import sgMail from '@sendgrid/mail';
 import config from '../../config/config';
-import normalizedRequest from '../normalize-request';
+import normalizedRequest from '../../helpers/utilities/normalize-request';
 
 function response({
     response,
@@ -22,14 +22,19 @@ export default async function handle(req, res) {
     const httpRequest = normalizedRequest(req);
 
     switch (httpRequest.path) {
-        case '/userresponse':
-            let respond = await sendUserResponse(httpRequest.body);
-            res.send(respond);
-        case '/send_email':
-            respond = await sendInvoice(httpRequest.body);
-            res.send(respond);
-        default:
-            break;
+    case '/userresponse':
+        await sendUserResponse(httpRequest.body).then((response) => {
+            res.send(response);
+        });
+
+        break;
+    case '/send_email':
+        await sendInvoice(httpRequest.body).then((response) => {
+            res.send(response);
+        });
+        break;
+    default:
+        break;
     }
 
     async function sendEmail(email) {
@@ -43,13 +48,12 @@ export default async function handle(req, res) {
         };
         await sgMail.send(msg);
 
-        let respondObj = response({
+        return response({
             'response': {
                 'success': true
             },
             'code': '1',
         });
-        return respondObj;
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -76,6 +80,6 @@ export default async function handle(req, res) {
 
     // eslint-disable-next-line no-unused-vars
     async function sendForgetPassword(obj) {
-        sendEmail(email);
+        sendEmail(obj);
     }
 }
