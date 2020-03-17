@@ -5,7 +5,7 @@ const ProductSchema = mongoose.Schema;
 let productSchema = ProductSchema({
     style: {
         type: String,
-        enum: ['Men', 'Women', 'Unisex'],
+        enum: ['Men', 'Women', 'Kids'],
         required: true
     },
     productName: {
