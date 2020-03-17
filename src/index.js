@@ -8,6 +8,7 @@ import database from './helpers/database';
 import authenticateJWT from './middlewares/auth';
 
 import authRouter from './routes/auth';
+import mailRouter from './routes/mail';
 import productRouter from './routes/product';
 import apiDocsRouter from './routes/api-docs';
 import categoryRouter from './routes/category';
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 database();
 
 app.use('/api/v1/product', authenticateJWT, productRouter);
+app.use('/api/v1/mail', mailRouter);
 app.use('/api/v1/category', authenticateJWT, categoryRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api-docs', apiDocsRouter);
