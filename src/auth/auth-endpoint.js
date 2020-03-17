@@ -48,13 +48,14 @@ export default function makeAuthEndPointHandler({
                 }
 
                 if (validPassword) {
-                    let accessToken = await jwtHandler({
-                        user
-                    });
+                    let accessToken = await jwtHandler(user);
 
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: {
+                            _id: user._id,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
                             accessToken: accessToken
                         },
                         message: 'Login successful'
