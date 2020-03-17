@@ -14,52 +14,57 @@ export default function makeProductsEndpointHandler({
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
         case 'POST':
-            return postProduct(httpRequest);
-
+            return addProduct(httpRequest);
         case 'GET':
             return getProducts(httpRequest);
-
         case 'DELETE':
             return deleteProduct(httpRequest);
-
         default:
             return objectHandler({
-                statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
-                errorMessage: `${httpRequest.method} method not allowed`
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
             });
         }
     };
 
-    async function getAllProducts(httpRequest) {
-        try {
-            const {
-                id
-            } = httpRequest.pathParams || {};
-            const {
-                max,
-                before,
-                after
-            } = httpRequest.queryParams || {};
-
-            let result = null;
-
-            if (!id) {
+    async function getProducts(httpRequest) {
+        let result = null;
+        const pathParams = httpRequest.pathParams;
+        if (!pathParams.id) {
+            try {
                 result = await productList.getAllProducts();
-            } else {
-                result = await productList.findProductById({ id });
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: ''
+                });
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
             }
-
-            return objectHandler({
-                status: HttpResponseType.SUCCESS,
-                data: result,
-                message: ''
-            });
-        } catch (error) {
-            console.log(error.message);
-            return objectHandler({
-                code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message
-            });
+        } else {
+            try {
+                result = await productList.findProductById(pathParams.id);
+                if (result && result.length) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Requested '${pathParams.id}' not found in products`
+                    });
+                }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
         }
     }
 
@@ -83,7 +88,7 @@ export default function makeProductsEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    message: `${data.productName} created successful`
+                    message: `'${data.productName}' created successful`
                 });
 
             } else {
@@ -102,17 +107,29 @@ export default function makeProductsEndpointHandler({
     }
 
     async function deleteProduct(httpRequest) {
-        const {
-            id
-        } = httpRequest.pathParams || {};
+        const pathParams = httpRequest.pathParams;
 
-        let result = await productList.removeProduct({
-            id
-        });
+        try {
+            let result = await productList.removeProduct(pathParams.id);
 
-        return objectHandler({
-            status: HttpResponseType.SUCCESS,
-            data: data
-        });
+            if (result && result.deletedCount) {
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: `'${pathParams.id}' record is deleted successful`,
+                    message: ''
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Requested '${pathParams.id}' not found in products`
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
+            });
+        }
     }
 }

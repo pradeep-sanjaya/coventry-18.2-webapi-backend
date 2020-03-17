@@ -7,7 +7,7 @@ import { errorResponse } from '../helpers/response/response-dispatcher';
 
 //token check middleware
 export default function authenticateJWT(req, res, next) {
-	const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
     if (authHeader) {
         const token = authHeader.split(' ')[1];

@@ -30,35 +30,26 @@ export default function makeProductList() {
         }
     }
 
-    async function findProductById({
-        id
-    }) {
+    async function findProductById(id) {
         try {
             return Product.find({
                 _id: id
             }).then((product) => {
                 return product;
             }).catch((error) => {
-            	return error;
+                return error;
             });
         } catch (error) {
             return error;
         }
     }
 
-    async function remove({ id }) {
+    async function removeProduct(id) {
         try {
-            return Product.remove({ _id: id }).then((success) => {
-                if (success) {
-                    return {
-                        success: true,
-                        message: 'Product deleted successfully'
-                    };
-                }
-            }).catch((err) => {
-                if (error) {
-                    return error;
-                }
+            return Product.deleteOne({ _id: id }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
             });
         } catch (error) {
             return error;
@@ -66,10 +57,10 @@ export default function makeProductList() {
     }
 
     // todo:
-    async function replace() {
+    async function replaceProduct() {
     }
 
     // todo:
-    async function update() {
+    async function updateProduct() {
     }
 }

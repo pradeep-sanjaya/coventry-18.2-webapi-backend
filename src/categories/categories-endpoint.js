@@ -1,5 +1,13 @@
-import makeHttpError from '../helpers/validators/http-error';
+import { encodeUrl } from '../helpers/utilities/url-parser';
+
 import HttpResponseType from '../models/http-response-type';
+
+function objectHandler(data) {
+    return {
+        headers: { 'Content-Type': 'application/json' },
+        data: data
+    };
+}
 
 export default function makeCategoriesEndpointHandler({
     categoryList
@@ -8,78 +16,115 @@ export default function makeCategoriesEndpointHandler({
         switch (httpRequest.method) {
         case 'POST':
             return addCategory(httpRequest);
-
         case 'GET':
             return getCategories(httpRequest);
-
         case 'DELETE':
             return deleteCategory(httpRequest);
-
         default:
-            return makeHttpError({
-                statusCode: HttpResponseType.METHOD_NOT_ALLOWED,
-                errorMessage: `${httpRequest.method} method not allowed.`
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
             });
         }
     };
 
     async function addCategory(httpRequest) {
-        let result = await categoryList.add({
-            'category': httpRequest.body
-        });
+        try {
+            const body = httpRequest.body;
+            if (body) {
+                const categoryObj = {
+                    category: body['category'],
+                    style: body['style'],
+                    status: body['status'],
+                    imageUrl: encodeUrl(body['imageUrl'])
+                };
 
-        return {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            statusCode: HttpResponseType.SUCCESS,
-            data: {
-                result
+                let data = await categoryList.addCategory(categoryObj);
+
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    message: `${data.category} created successful`
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.CLIENT_ERROR,
+                    message: 'Request body does not contain a body'
+                });
             }
-        };
+        } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: error.message
+            });
+        }
     }
 
     async function getCategories(httpRequest) {
-        const {
-            id
-        } = httpRequest.pathParams || {};
-
-        const {
-            max,
-            before,
-            after
-        } = httpRequest.queryParams || {};
         let result = null;
-        if (!id) {
-            result = await categoryList.getCategories();
+        const pathParams = httpRequest.pathParams;
+        if (!pathParams.id) {
+            try {
+                result = await categoryList.getAllCategories();
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: ''
+                });
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
         } else {
-            result = await categoryList.findCategoryById({
-                id
+            try {
+                result = await categoryList.findCategoryById(pathParams.id);
+                if (result && result.length) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Requested '${pathParams.id}' not found in categories`
+                    });
+                }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
+        }
+    }
+
+    async function deleteCategory(httpRequest) {
+        const pathParams = httpRequest.pathParams;
+
+        try {
+            let result = await categoryList.removeCategory(pathParams.id);
+
+            if (result && result.deletedCount) {
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: `'${pathParams.id}' record is deleted successful`,
+                    message: ''
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Requested '${pathParams.id}' not found in categories`
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
             });
         }
-        return {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            statusCode: HttpResponseType.SUCCESS,
-            data: JSON.stringify({
-                result
-            })
-        };
-    }
-    async function deleteCategory(httpRequest) {
-        const {
-            id
-        } = httpRequest.pathParams || {};
-        let result = await categoryList.remove({id});
-        return {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            statusCode: HttpResponseType.SUCCESS,
-            data: JSON.stringify({
-                result
-            })
-        };
     }
 }

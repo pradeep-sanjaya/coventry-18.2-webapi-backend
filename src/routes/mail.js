@@ -1,12 +1,13 @@
 import express from 'express';
+
 let mailRouter = express.Router();
 
 import sendEmail from '../helpers/mail/mailer';
 
 
-mailRouter.post('/userresponse',  (req, res, next) => {
-    sendEmail(req,res);
-    
+mailRouter.post('/userresponse', (req, res) => {
+    sendEmail(req, res);
+
 });
 
 
