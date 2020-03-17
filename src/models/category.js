@@ -11,11 +11,15 @@ let categorySchema = CategorySchema({
     style: {
         type: String,
         required: true,
-        enum: ['Men', 'Women']
+        enum: ['Men', 'Women', 'Unisex']
     },
-    imageUrl: {
-        type: String,
-        required: true
+	imageUrl: {
+		type: String,
+		required: true
+	},
+    status: {
+        type: Boolean,
+        default: true
     }
 });
 

@@ -5,7 +5,7 @@ const ProductSchema = mongoose.Schema;
 let productSchema = ProductSchema({
     style: {
         type: String,
-        enum: ['Men', 'Women'],
+        enum: ['Men', 'Women', 'Unisex'],
         required: true
     },
     productName: {
@@ -33,9 +33,9 @@ let productSchema = ProductSchema({
     availableSizes: {
         type: [String],
         enum: [
-            'Small',
-            'Medium',
-            'Large',
+            'S',
+            'M',
+            'L',
             'XL',
             'XXL'],
         required: true

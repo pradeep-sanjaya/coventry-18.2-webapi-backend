@@ -1,12 +1,13 @@
 import Product from '../models/product';
-import Category from '../models/category';
 
 export default function makeProductList() {
     return Object.freeze({
         addProduct,
         getAllProducts,
-        addCategory,
-        getAllCategories,
+        findProductById,
+        removeProduct,
+        replaceProduct,
+        updateProduct
     });
 
     async function getAllProducts() {
@@ -14,10 +15,10 @@ export default function makeProductList() {
             return Product.find().then((data) => {
                 return data;
             }).catch((error) => {
-                console.log(error.message);
+                return error;
             });
         } catch (error) {
-            console.log(error.message);
+            return error;
         }
     }
 
@@ -29,23 +30,46 @@ export default function makeProductList() {
         }
     }
 
-    async function getAllCategories() {
+    async function findProductById({
+        id
+    }) {
         try {
-            return Category.find().then((data) => {
-                return data;
+            return Product.find({
+                _id: id
+            }).then((product) => {
+                return product;
             }).catch((error) => {
-                return error;
+            	return error;
             });
         } catch (error) {
             return error;
         }
     }
 
-    async function addCategory(category) {
+    async function remove({ id }) {
         try {
-            return new Category(category).save();
+            return Product.remove({ _id: id }).then((success) => {
+                if (success) {
+                    return {
+                        success: true,
+                        message: 'Product deleted successfully'
+                    };
+                }
+            }).catch((err) => {
+                if (error) {
+                    return error;
+                }
+            });
         } catch (error) {
             return error;
         }
+    }
+
+    // todo:
+    async function replace() {
+    }
+
+    // todo:
+    async function update() {
     }
 }
