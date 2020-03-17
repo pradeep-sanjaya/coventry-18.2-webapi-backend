@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 import config from './config/config';
 
@@ -20,6 +21,7 @@ import HttpResponseType from './models/http-response-type';
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 
 initializeDB();
