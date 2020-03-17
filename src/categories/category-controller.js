@@ -1,11 +1,11 @@
-import handleProductRequest from './';
+import handleCategoryRequest from './';
 import normalizedRequest from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 import { successResponseWithData, errorResponse } from '../helpers/response/response-dispatcher';
 
-export default function productsController(req, res) {
+export default function categoryController(req, res) {
     const httpRequest = normalizedRequest(req);
-    handleProductRequest(httpRequest)
+    handleCategoryRequest(httpRequest)
         .then(({
             headers,
             data

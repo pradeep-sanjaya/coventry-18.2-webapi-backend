@@ -1,88 +1,85 @@
 import sgMail from '@sendgrid/mail';
 import config from '../../config/config';
-import express from 'express';
-import normalizedRequest from '../normalize-request';
-import HttpResponseType from '../../models/http-response-type';
+import normalizedRequest from '../../helpers/utilities/normalize-request';
 
 function response({
-	response,
-	code
+    response,
+    code
 }) {
-	return {
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		statusCode: code,
-		data: JSON.stringify({
-			response
-		}
-		)
-	};
+    return {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        statusCode: code,
+        data: JSON.stringify({
+            response
+        })
+    };
 }
-
 
 export default async function handle(req, res) {
 
-	const httpRequest = normalizedRequest(req);
-	
-	switch (httpRequest.path) {
-	case '/userresponse': 
-		let respond = await sendUserResponse(
-			httpRequest.body
-		);
-		res.send(respond);
-	case '/send_email':
-		respond = await sendInvoice(
-			httpRequest.body
-		);
-		res.send(respond);
-	default:
-		
-	}
-	
-	async function sendEmail(email) {
-		sgMail.setApiKey(config.sendGridApiKey);
-		const msg = {
-			to: email.to,
-			from: email.from,
-			subject: email.subject,
-			text: email.text,
-			html: email.text
-		};
-		await sgMail.send(msg);
+    const httpRequest = normalizedRequest(req);
 
-		let respondObj =  response({
-			'response': {
-				'success': true
-			},
-			'code':'1',
-		});
-		return respondObj;
-	}
+    switch (httpRequest.path) {
+    case '/userresponse':
+        await sendUserResponse(httpRequest.body).then((response) => {
+            res.send(response);
+        });
 
-	async function sendUserResponse(req,res) {
-		try{
-			let email = {
-				to: process.env.ADMIN_EMAIL,
-				from: req.sender,
-				subject: req.subject,
-				text: req.text,
-				html: req.text
-			}
-			return sendEmail(email);
-		}catch(e){
-			return e;
-		}
-		
-	};
+        break;
+    case '/send_email':
+        await sendInvoice(httpRequest.body).then((response) => {
+            res.send(response);
+        });
+        break;
+    default:
+        break;
+    }
 
-	async function sendInvoice(req,res) {
+    async function sendEmail(email) {
+        sgMail.setApiKey(config.sendGridApiKey);
+        const msg = {
+            to: email.to,
+            from: email.from,
+            subject: email.subject,
+            text: email.text,
+            html: email.text
+        };
+        await sgMail.send(msg);
 
-	};
+        return response({
+            'response': {
+                'success': true
+            },
+            'code': '1',
+        });
+    }
 
-	async function sendForgetPassword(obj) {
-		sendEmail(email);
-		
-	};
+    // eslint-disable-next-line no-unused-vars
+    async function sendUserResponse(req, res) {
+        try {
+            let email = {
+                to: process.env.ADMIN_EMAIL,
+                from: req.sender,
+                subject: req.subject,
+                text: req.text,
+                html: req.text
+            };
+            return sendEmail(email);
+        } catch (e) {
+            return e;
+        }
 
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    async function sendInvoice(req, res) {
+
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    async function sendForgetPassword(obj) {
+        sendEmail(obj);
+    }
 }

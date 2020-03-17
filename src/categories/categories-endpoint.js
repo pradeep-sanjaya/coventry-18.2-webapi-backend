@@ -1,5 +1,6 @@
-import HttpResponseType from '../models/http-response-type';
 import { encodeUrl } from '../helpers/utilities/url-parser';
+
+import HttpResponseType from '../models/http-response-type';
 
 function objectHandler(data) {
     return {
@@ -8,17 +9,17 @@ function objectHandler(data) {
     };
 }
 
-export default function makeProductsEndpointHandler({
-    productList
+export default function makeCategoriesEndpointHandler({
+    categoryList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
         case 'POST':
-            return addProduct(httpRequest);
+            return addCategory(httpRequest);
         case 'GET':
-            return getProducts(httpRequest);
+            return getCategories(httpRequest);
         case 'DELETE':
-            return deleteProduct(httpRequest);
+            return deleteCategory(httpRequest);
         default:
             return objectHandler({
                 code: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -27,70 +28,23 @@ export default function makeProductsEndpointHandler({
         }
     };
 
-    async function getProducts(httpRequest) {
-        let result = null;
-        const pathParams = httpRequest.pathParams;
-        if (!pathParams.id) {
-            try {
-                result = await productList.getAllProducts();
-                return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: result,
-                    message: ''
-                });
-            } catch (error) {
-                return objectHandler({
-                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                    message: error.message
-                });
-            }
-        } else {
-            try {
-                result = await productList.findProductById(pathParams.id);
-                if (result && result.length) {
-                    return objectHandler({
-                        status: HttpResponseType.SUCCESS,
-                        data: result,
-                        message: ''
-                    });
-                } else {
-                    return objectHandler({
-                        code: HttpResponseType.NOT_FOUND,
-                        message: `Requested '${pathParams.id}' not found in products`
-                    });
-                }
-            } catch (error) {
-                return objectHandler({
-                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                    message: error.message
-                });
-            }
-        }
-    }
-
-    async function addProduct(httpRequest) {
+    async function addCategory(httpRequest) {
         try {
             const body = httpRequest.body;
             if (body) {
-                const productObj = {
-                    style: body['style'],
-                    productName: body['productName'],
+                const categoryObj = {
                     category: body['category'],
-                    availableQty: body['availableQty'],
-                    isAvailable: body['isAvailable'],
-                    unitPrice: body['unitPrice'],
-                    availableSizes: body['availableSizes'],
-                    availableColors: body['availableColors'],
+                    style: body['style'],
+                    status: body['status'],
                     imageUrl: encodeUrl(body['imageUrl'])
                 };
 
-                let data = await productList.addProduct(productObj);
+                let data = await categoryList.addCategory(categoryObj);
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    message: `'${data.productName}' created successful`
+                    message: `${data.category} created successful`
                 });
-
             } else {
                 return objectHandler({
                     code: HttpResponseType.CLIENT_ERROR,
@@ -106,11 +60,52 @@ export default function makeProductsEndpointHandler({
         }
     }
 
-    async function deleteProduct(httpRequest) {
+    async function getCategories(httpRequest) {
+        let result = null;
+        const pathParams = httpRequest.pathParams;
+        if (!pathParams.id) {
+            try {
+                result = await categoryList.getAllCategories();
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: ''
+                });
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
+        } else {
+            try {
+                result = await categoryList.findCategoryById(pathParams.id);
+                if (result && result.length) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Requested '${pathParams.id}' not found in categories`
+                    });
+                }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
+        }
+    }
+
+    async function deleteCategory(httpRequest) {
         const pathParams = httpRequest.pathParams;
 
         try {
-            let result = await productList.removeProduct(pathParams.id);
+            let result = await categoryList.removeCategory(pathParams.id);
 
             if (result && result.deletedCount) {
                 return objectHandler({
@@ -121,7 +116,7 @@ export default function makeProductsEndpointHandler({
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Requested '${pathParams.id}' not found in products`
+                    message: `Requested '${pathParams.id}' not found in categories`
                 });
             }
         } catch (error) {

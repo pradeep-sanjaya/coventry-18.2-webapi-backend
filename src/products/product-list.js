@@ -1,78 +1,66 @@
 import Product from '../models/product';
-import Category from '../models/category';
 
-export default function makeProductList({
-	database
-}) {
-	return Object.freeze({
-		add,
-		findById,
-		getProducts,
-		remove,
-		replace,
-		update,
-		addCategory,
-		getCategories,
-	});
+export default function makeProductList() {
+    return Object.freeze({
+        addProduct,
+        getAllProducts,
+        findProductById,
+        removeProduct,
+        replaceProduct,
+        updateProduct
+    });
 
-	async function getProducts({
-		max = 100,
-		before,
-		after
-	} = {}) {
-		try {
-			return Product.find({}).then(function(storedDataArray) {
-				return storedDataArray;
-			}).catch(function(err) {
-				if (err) {
-					throw new Error(err.message);
-				}
-			});
-		} catch (e) {
-			console.log(e);
-		}
+    async function getAllProducts() {
+        try {
+            return Product.find().then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
 
-	}
-}
+    async function addProduct(product) {
+        try {
+            return new Product(product).save();
+        } catch (error) {
+            return error;
+        }
+    }
 
-async function add({
-	product
-}) {
-	let pro = new Product(product);
-	return pro.save();
-}
+    async function findProductById(id) {
+        try {
+            return Product.find({
+                _id: id
+            }).then((product) => {
+                return product;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
 
-async function findById({}) {
+    async function removeProduct(id) {
+        try {
+            return Product.deleteOne({ _id: id }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
 
-}
+    // todo:
+    async function replaceProduct() {
+    }
 
-async function remove({}) {
-
-}
-
-// todo:
-async function replace() {
-}
-
-// todo:
-async function update() {
-}
-
-async function addCategory({ category }) {
-	var cat = new Category(category);
-	return cat.save();
-}
-
-async function getCategories() {
-	try {
-		return Category.find({}).then(function(storedDataArray) {
-			return storedDataArray;
-		}).catch(function(err) {
-			if (err) {
-				throw new Error(err.message);
-			}
-		});
-	} catch (e) {
-		console.log(e);
-	}
+    // todo:
+    async function updateProduct() {
+    }
 }
