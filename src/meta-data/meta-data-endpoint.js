@@ -1,11 +1,5 @@
+import { objectHandler } from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
-
-function objectHandler(data) {
-    return {
-        headers: { 'Content-Type': 'application/json' },
-        data: data
-    };
-}
 
 export default function makeMetaDataEndpointHandler({
     metaDataList

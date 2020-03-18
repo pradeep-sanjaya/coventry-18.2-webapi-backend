@@ -1,29 +1,23 @@
 import HttpResponseType from '../models/http-response-type';
 import { encodeUrl } from '../helpers/utilities/url-parser';
-
-function objectHandler(data) {
-    return {
-        headers: { 'Content-Type': 'application/json' },
-        data: data
-    };
-}
+import { objectHandler } from '../helpers/utilities/normalize-request';
 
 export default function makeProductsEndpointHandler({
     productList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-            case 'POST':
-                return addProduct(httpRequest);
-            case 'GET':
-                return getProducts(httpRequest);
-            case 'DELETE':
-                return deleteProduct(httpRequest);
-            default:
-                return objectHandler({
-                    code: HttpResponseType.METHOD_NOT_ALLOWED,
-                    message: `${httpRequest.method} method not allowed`
-                });
+        case 'POST':
+            return addProduct(httpRequest);
+        case 'GET':
+            return getProducts(httpRequest);
+        case 'DELETE':
+            return deleteProduct(httpRequest);
+        default:
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
+            });
         }
     };
 

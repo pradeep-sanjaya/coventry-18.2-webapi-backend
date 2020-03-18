@@ -1,23 +1,24 @@
 import handleProductRequest from './';
 import normalizedRequest from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
-import { successResponseWithData, errorResponse } from '../helpers/response/response-dispatcher';
+import { successResponse, errorResponse } from '../helpers/response/response-dispatcher';
 
 export default function metaDataController(req, res) {
     const httpRequest = normalizedRequest(req);
     handleProductRequest(httpRequest)
         .then(({
-            headers,
             data
         }) => {
             if (data.status) {
-                successResponseWithData(res, data, headers);
+                successResponse(res, data);
             } else {
-                errorResponse(res, data.code, data.message);
+                errorResponse(res, data);
             }
         }
         )
         .catch((error) => {
-            errorResponse(res, HttpResponseType.INTERNAL_SERVER_ERROR, error.message);
+            errorResponse(res, {
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message});
         });
 }

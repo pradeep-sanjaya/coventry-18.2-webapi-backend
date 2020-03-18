@@ -1,9 +1,12 @@
 import User from '../models/user';
+import hasher from '../helpers/hasher';
 
 export default function makeAuthList() {
     return Object.freeze({
         addUser,
-        findByEmail
+        findByEmail,
+        resetPassword,
+        updateResetToken
     });
 
     async function addUser(user) {
@@ -20,6 +23,40 @@ export default function makeAuthList() {
             return User.findOne(email);
         } catch (error) {
             console.log(error.message);
+            return error;
+        }
+    }
+
+    async function updateResetToken(resetObj) {
+        try {
+            return User.findOneAndUpdate(resetObj.email,
+                { $set: { resetToken: resetObj.resetToken } },
+                { new: true });
+        } catch (error) {
+            console.log(error.message);
+            return error;
+        }
+    }
+
+    async function resetPassword(resetObj) {
+        try {
+            const hashed = hasher({
+                password: resetObj.password,
+            });
+            let user = null;
+            await User.findOne({resetToken:  resetObj.resetToken},(err,userObj)=>{
+                user = userObj;
+            });
+
+            if(user) {
+                return User.findOneAndUpdate(
+                    resetObj.resetToken,
+                    { $set: { password: hashed, resetToken: null } },
+                    { new: true });
+            }
+            return false;
+
+        } catch (error) {
             return error;
         }
     }

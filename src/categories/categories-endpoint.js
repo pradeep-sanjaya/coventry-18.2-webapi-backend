@@ -1,30 +1,24 @@
 import { encodeUrl } from '../helpers/utilities/url-parser';
+import { objectHandler } from '../helpers/utilities/normalize-request';
 
 import HttpResponseType from '../models/http-response-type';
-
-function objectHandler(data) {
-    return {
-        headers: { 'Content-Type': 'application/json' },
-        data: data
-    };
-}
 
 export default function makeCategoriesEndpointHandler({
     categoryList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-            case 'POST':
-                return addCategory(httpRequest);
-            case 'GET':
-                return getCategories(httpRequest);
-            case 'DELETE':
-                return deleteCategory(httpRequest);
-            default:
-                return objectHandler({
-                    code: HttpResponseType.METHOD_NOT_ALLOWED,
-                    message: `${httpRequest.method} method not allowed`
-                });
+        case 'POST':
+            return addCategory(httpRequest);
+        case 'GET':
+            return getCategories(httpRequest);
+        case 'DELETE':
+            return deleteCategory(httpRequest);
+        default:
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
+            });
         }
     };
 
