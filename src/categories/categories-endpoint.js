@@ -41,7 +41,7 @@ export default function makeCategoriesEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    message: `${data.category} created successful`
+                    message: `${data.name} created successful`
                 });
             } else {
                 return objectHandler({
