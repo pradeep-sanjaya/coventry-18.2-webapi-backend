@@ -85,7 +85,7 @@ export default function makeProductsEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    message: `'${data.productName}' created successful`
+                    message: `'${data.name}' created successful`
                 });
 
             } else {
