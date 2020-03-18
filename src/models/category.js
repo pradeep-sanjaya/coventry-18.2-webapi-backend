@@ -3,23 +3,14 @@ import mongoose from 'mongoose';
 const CategorySchema = mongoose.Schema;
 
 let categorySchema = CategorySchema({
-    category: {
+    name: {
         type: String,
         unique: true,
         required: true
     },
-    style: {
-        type: String,
-        required: true,
-        enum: ['Men', 'Women', 'Kids']
-    },
     imageUrl: {
         type: String,
         required: true
-    },
-    status: {
-        type: Boolean,
-        default: true
     }
 });
 

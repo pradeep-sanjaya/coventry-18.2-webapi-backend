@@ -13,17 +13,17 @@ export default function makeProductsEndpointHandler({
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-        case 'POST':
-            return addProduct(httpRequest);
-        case 'GET':
-            return getProducts(httpRequest);
-        case 'DELETE':
-            return deleteProduct(httpRequest);
-        default:
-            return objectHandler({
-                code: HttpResponseType.METHOD_NOT_ALLOWED,
-                message: `${httpRequest.method} method not allowed`
-            });
+            case 'POST':
+                return addProduct(httpRequest);
+            case 'GET':
+                return getProducts(httpRequest);
+            case 'DELETE':
+                return deleteProduct(httpRequest);
+            default:
+                return objectHandler({
+                    code: HttpResponseType.METHOD_NOT_ALLOWED,
+                    message: `${httpRequest.method} method not allowed`
+                });
         }
     };
 
@@ -73,14 +73,11 @@ export default function makeProductsEndpointHandler({
             const body = httpRequest.body;
             if (body) {
                 const productObj = {
-                    style: body['style'],
-                    productName: body['productName'],
+                    name: body['name'],
                     category: body['category'],
-                    availableQty: body['availableQty'],
+                    qty: body['qty'],
                     isAvailable: body['isAvailable'],
-                    unitPrice: body['unitPrice'],
-                    availableSizes: body['availableSizes'],
-                    availableColors: body['availableColors'],
+                    price: body['price'],
                     imageUrl: encodeUrl(body['imageUrl'])
                 };
 

@@ -35,9 +35,7 @@ export default function makeCategoriesEndpointHandler({
             const body = httpRequest.body;
             if (body) {
                 const categoryObj = {
-                    category: body['category'],
-                    style: body['style'],
-                    status: body['status'],
+                    name: body['name'],
                     imageUrl: encodeUrl(body['imageUrl'])
                 };
 
@@ -45,7 +43,7 @@ export default function makeCategoriesEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    message: `${data.category} created successful`
+                    message: `${data.name} created successful`
                 });
             } else {
                 return objectHandler({
