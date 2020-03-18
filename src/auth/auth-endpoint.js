@@ -61,7 +61,7 @@ export default function makeAuthEndPointHandler({
                     });
                 } else {
                     return objectHandler({
-                        code: HttpResponseType.AUTH_REQUIRED,
+                        code: HttpResponseType.FORBIDDEN,
                         message: 'Invalid email or password'
                     });
                 }

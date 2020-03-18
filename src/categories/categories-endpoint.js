@@ -20,6 +20,8 @@ export default function makeCategoriesEndpointHandler({
             return getCategories(httpRequest);
         case 'DELETE':
             return deleteCategory(httpRequest);
+        case 'PUT':
+            return updateCategory(httpRequest);
         default:
             return objectHandler({
                 code: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -120,6 +122,22 @@ export default function makeCategoriesEndpointHandler({
                 });
             }
         } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
+            });
+        }
+    }
+    async function updateCategory(httpRequest) {
+        const { id } = httpRequest.pathParams || '';
+        const { body } = httpRequest;
+
+        console.log(body);
+        try {
+            let result = await categoryList.updateCategory({id,body});
+            console.log(result);
+        }catch (error) {
             console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
