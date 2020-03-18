@@ -1,13 +1,7 @@
 import { encodeUrl } from '../helpers/utilities/url-parser';
 
 import HttpResponseType from '../models/http-response-type';
-
-function objectHandler(data) {
-    return {
-        headers: { 'Content-Type': 'application/json' },
-        data: data
-    };
-}
+import {objectHandler} from '../helpers/utilities/normalize-request';
 
 export default function makeCategoriesEndpointHandler({
     categoryList
@@ -31,12 +25,13 @@ export default function makeCategoriesEndpointHandler({
     };
 
     async function addCategory(httpRequest) {
+        const {name,imageUrl} = httpRequest.body;
         try {
-            const body = httpRequest.body;
-            if (body) {
+            if (httpRequest.body) {
+
                 const categoryObj = {
-                    name: body['name'],
-                    imageUrl: encodeUrl(body['imageUrl'])
+                    name,
+                    imageUrl:encodeUrl(imageUrl)
                 };
 
                 let data = await categoryList.addCategory(categoryObj);
@@ -48,14 +43,13 @@ export default function makeCategoriesEndpointHandler({
             } else {
                 return objectHandler({
                     code: HttpResponseType.CLIENT_ERROR,
-                    message: 'Request body does not contain a body'
+                    message: 'Request body does not contain a body.'
                 });
             }
         } catch (error) {
-            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.message
+                message: error.code === 11000 ? `Category ${name} is exists.`: error.message
             });
         }
     }
@@ -120,7 +114,6 @@ export default function makeCategoriesEndpointHandler({
                 });
             }
         } catch (error) {
-            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
@@ -130,16 +123,19 @@ export default function makeCategoriesEndpointHandler({
     async function updateCategory(httpRequest) {
         const { id } = httpRequest.pathParams || '';
         const { body } = httpRequest;
-
-        console.log(body);
         try {
-            let result = await categoryList.updateCategory({id,body});
-            console.log(result);
-        }catch (error) {
-            console.log(error.message);
+            let category = await categoryList.updateCategory({id,body});
             return objectHandler({
-                code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message
+                status: HttpResponseType.SUCCESS,
+                data: category,
+                message: ''
+            });
+
+        }catch (error) {
+
+            return objectHandler({
+                code: HttpResponseType.NOT_FOUND,
+                message:error.code === 11000 ? 'Category already exists..': error.name === 'CastError' ? 'Category not found.' : error.message
             });
         }
     }

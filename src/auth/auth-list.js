@@ -10,7 +10,6 @@ export default function makeAuthList() {
         try {
             return new User(user).save();
         } catch (error) {
-            console.log(error.message);
             return error;
         }
     }
@@ -19,7 +18,6 @@ export default function makeAuthList() {
         try {
             return User.findOne(email);
         } catch (error) {
-            console.log(error.message);
             return error;
         }
     }

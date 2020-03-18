@@ -48,16 +48,17 @@ export default function makeAuthEndPointHandler({
 
                 if (validPassword) {
                     let accessToken = await jwtHandler(user);
+                    const {_id,firstName,lastName} = user;
 
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: {
-                            _id: user._id,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            accessToken: accessToken
+                            _id,
+                            firstName,
+                            lastName,
+                            accessToken
                         },
-                        message: 'Login successful'
+                        message: 'Login successful.'
                     });
                 } else {
                     return objectHandler({
@@ -81,18 +82,18 @@ export default function makeAuthEndPointHandler({
     }
 
     async function registerUser(httpRequest) {
+        const {password,email,role,gender,firstName,lastName} = httpRequest.body;
         try {
-            const body = httpRequest.body;
-            if (body) {
+            if (httpRequest.body) {
                 const userObj = {
                     password: hasher({
-                        password: body['password'],
+                        password
                     }),
-                    email: body['email'],
-                    role: body['role'],
-                    gender: body['gender'],
-                    firstName: body['firstName'],
-                    lastName: body['lastName']
+                    email,
+                    role,
+                    gender,
+                    firstName,
+                    lastName
                 };
 
                 let user = await userList.addUser(userObj);
@@ -117,7 +118,7 @@ export default function makeAuthEndPointHandler({
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.message
+                message: error.code === 11000 ? `User ${firstName} is exists.`: error.message
             });
         }
     }

@@ -62,9 +62,6 @@ export default function makeCategoryList() {
 
     // todo:
     async function updateCategory({id,body}) {
-        let result = await this.findCategoryById(id);
-        const {category} = result;
-        console.log(category);
-        return await this.findCategoryById(id);
+        return Category.findByIdAndUpdate(id,body,{new: true});
     }
 }
