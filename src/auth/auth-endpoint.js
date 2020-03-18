@@ -33,16 +33,15 @@ export default function makeAuthEndPointHandler({
     async function loginUser(httpRequest) {
         try {
             let validPassword = false;
-            const body = httpRequest.body;
-
-            if (body) {
+            const { email ,password} = httpRequest.body;
+            if (email) {
                 let user = await userList.findByEmail({
-                    email: httpRequest.body['email']
+                    email
                 });
 
                 if (user) {
                     validPassword = await hashValidator({
-                        password: httpRequest.body['password'],
+                        password,
                         hash: user.password
                     });
                 }
@@ -61,7 +60,7 @@ export default function makeAuthEndPointHandler({
                     });
                 } else {
                     return objectHandler({
-                        code: HttpResponseType.NOT_FOUND,
+                        code: HttpResponseType.AUTH_REQUIRED,
                         message: 'Invalid email or password'
                     });
                 }
