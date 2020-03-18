@@ -36,25 +36,26 @@ export default function makeAuthEndPointHandler({
             const body = httpRequest.body;
 
             if (body) {
-                let user = await userList.findByUsername({
-                    'username': httpRequest.body['username']
+                let user = await userList.findByEmail({
+                    email: httpRequest.body['email']
                 });
 
                 if (user) {
                     validPassword = await hashValidator({
-                        'password': httpRequest.body['password'],
-                        'hash': user.password
+                        password: httpRequest.body['password'],
+                        hash: user.password
                     });
                 }
 
                 if (validPassword) {
-                    let accessToken = await jwtHandler({
-                        user
-                    });
+                    let accessToken = await jwtHandler(user);
 
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: {
+                            _id: user._id,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
                             accessToken: accessToken
                         },
                         message: 'Login successful'
@@ -62,7 +63,7 @@ export default function makeAuthEndPointHandler({
                 } else {
                     return objectHandler({
                         code: HttpResponseType.NOT_FOUND,
-                        message: 'Invalid username or password'
+                        message: 'Invalid email or password'
                     });
                 }
             } else {
@@ -85,18 +86,14 @@ export default function makeAuthEndPointHandler({
             const body = httpRequest.body;
             if (body) {
                 const userObj = {
-                    username: body['username'],
                     password: hasher({
                         password: body['password'],
                     }),
                     email: body['email'],
                     role: body['role'],
-                    contactNumber: body['contactNumber'],
                     gender: body['gender'],
                     firstName: body['firstName'],
-                    lastName: body['lastName'],
-                    questionId: body['questionId'],
-                    answer: body['answer']
+                    lastName: body['lastName']
                 };
 
                 let user = await userList.addUser(userObj);

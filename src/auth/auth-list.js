@@ -3,7 +3,7 @@ import User from '../models/user';
 export default function makeAuthList() {
     return Object.freeze({
         addUser,
-        findByUsername
+        findByEmail
     });
 
     async function addUser(user) {
@@ -15,9 +15,9 @@ export default function makeAuthList() {
         }
     }
 
-    async function findByUsername(username) {
+    async function findByEmail(email) {
         try {
-            return User.findOne(username);
+            return User.findOne(email);
         } catch (error) {
             console.log(error.message);
             return error;
