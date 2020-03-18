@@ -19,6 +19,7 @@ export default function productsController(req, res) {
         .catch((error) => {
             errorResponse(res, {
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message});
+                message: error.message
+            });
         });
 }

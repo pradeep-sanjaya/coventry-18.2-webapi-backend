@@ -1,4 +1,4 @@
-export default function normalizeRequest (req = {}) {
+export default function normalizeRequest(req = {}) {
     return Object.freeze({
         host: req.hostname,
         path: req.path,

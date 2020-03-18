@@ -8,7 +8,7 @@ export default function authController(req, res) {
     const httpRequest = normalizedRequest(req);
 
     handleAuthRequest(httpRequest)
-        .then(({data}) => {
+        .then(({ data }) => {
             if (data.status) {
                 return successResponse(res, data);
             } else {
@@ -18,6 +18,7 @@ export default function authController(req, res) {
         .catch((error) => {
             errorResponse(res, {
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message });
+                message: error.message
+            });
         });
 }

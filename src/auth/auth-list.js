@@ -44,11 +44,11 @@ export default function makeAuthList() {
                 password: resetObj.password,
             });
             let user = null;
-            await User.findOne({resetToken:  resetObj.resetToken},(err,userObj)=>{
+            await User.findOne({ resetToken: resetObj.resetToken }, (err, userObj) => {
                 user = userObj;
             });
 
-            if(user) {
+            if (user) {
                 return User.findOneAndUpdate(
                     resetObj.resetToken,
                     { $set: { password: hashed, resetToken: null } },
