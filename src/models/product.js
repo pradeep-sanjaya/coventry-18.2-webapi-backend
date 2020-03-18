@@ -3,12 +3,7 @@ import mongoose from 'mongoose';
 const ProductSchema = mongoose.Schema;
 
 let productSchema = ProductSchema({
-    style: {
-        type: String,
-        enum: ['Men', 'Women', 'Kids'],
-        required: true
-    },
-    productName: {
+    name: {
         type: String,
         unique: true,
         required: true
@@ -17,7 +12,7 @@ let productSchema = ProductSchema({
         type: String,
         required: true
     },
-    availableQty: {
+    qty: {
         type: Number,
         required: true
     },
@@ -26,22 +21,8 @@ let productSchema = ProductSchema({
         default: true,
         required: true
     },
-    unitPrice: {
+    price: {
         type: Number,
-        required: true
-    },
-    availableSizes: {
-        type: [String],
-        enum: [
-            'S',
-            'M',
-            'L',
-            'XL',
-            'XXL'],
-        required: true
-    },
-    availableColors: {
-        type: [String],
         required: true
     },
     imageUrl: {
