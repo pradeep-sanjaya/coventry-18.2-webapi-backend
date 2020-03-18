@@ -33,7 +33,7 @@ export default function makeCategoriesEndpointHandler({
             const body = httpRequest.body;
             if (body) {
                 const categoryObj = {
-                    category: body['name'],
+                    name: body['name'],
                     imageUrl: encodeUrl(body['imageUrl'])
                 };
 
