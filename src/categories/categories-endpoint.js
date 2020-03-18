@@ -14,17 +14,17 @@ export default function makeCategoriesEndpointHandler({
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-        case 'POST':
-            return addCategory(httpRequest);
-        case 'GET':
-            return getCategories(httpRequest);
-        case 'DELETE':
-            return deleteCategory(httpRequest);
-        default:
-            return objectHandler({
-                code: HttpResponseType.METHOD_NOT_ALLOWED,
-                message: `${httpRequest.method} method not allowed`
-            });
+            case 'POST':
+                return addCategory(httpRequest);
+            case 'GET':
+                return getCategories(httpRequest);
+            case 'DELETE':
+                return deleteCategory(httpRequest);
+            default:
+                return objectHandler({
+                    code: HttpResponseType.METHOD_NOT_ALLOWED,
+                    message: `${httpRequest.method} method not allowed`
+                });
         }
     };
 
@@ -33,9 +33,7 @@ export default function makeCategoriesEndpointHandler({
             const body = httpRequest.body;
             if (body) {
                 const categoryObj = {
-                    category: body['category'],
-                    style: body['style'],
-                    status: body['status'],
+                    category: body['name'],
                     imageUrl: encodeUrl(body['imageUrl'])
                 };
 
