@@ -8,7 +8,7 @@ import { errorResponse } from '../helpers/response/response-dispatcher';
 //token check middleware
 export default function filterRoute(req, res, next) {
     const authHeader = req.headers.authorization;
-    const {method} = req;
+    const { method } = req;
 
     if (authHeader) {
         const token = authHeader.split(' ')[1];
@@ -19,7 +19,7 @@ export default function filterRoute(req, res, next) {
                     message: error.message
                 });
             }
-            const {role} = user;
+            const { role } = user;
             switch (role) {
             case 'Admin':
                 req.user = user;
@@ -33,7 +33,7 @@ export default function filterRoute(req, res, next) {
                 case 'PATCH':
                     return errorResponse(res, {
                         code: HttpResponseType.FORBIDDEN,
-                        message: 'Unauthorized'
+                        message: 'Insufficient permissions to access this resource'
                     });
                 default:
                     next();
@@ -43,7 +43,7 @@ export default function filterRoute(req, res, next) {
             default:
                 return errorResponse(res, {
                     code: HttpResponseType.FORBIDDEN,
-                    message: 'Unauthorized'
+                    message: 'Insufficient permissions to access this resource'
                 });
             }
         });

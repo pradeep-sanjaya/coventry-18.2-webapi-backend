@@ -61,7 +61,7 @@ export default function makeAuthEndPointHandler({
                     });
                 } else {
                     return objectHandler({
-                        code: HttpResponseType.FORBIDDEN,
+                        code: HttpResponseType.CLIENT_ERROR,
                         message: 'Invalid email or password'
                     });
                 }
@@ -98,7 +98,7 @@ export default function makeAuthEndPointHandler({
                 let user = await userList.addUser(userObj);
 
                 await sendEmail({
-                    from: 'web-api@nibm.lk',
+                    from: config.adminEmail,
                     to: user.email,
                     subject: 'Registration Successful',
                     text: 'Registration successful. Thanks for choosing our store.',
