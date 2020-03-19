@@ -1,19 +1,20 @@
 import express from 'express';
 import productController from '../products/product-controller';
+import filterRoute from '../middlewares/route-filter';
 
 let productRouter = express.Router();
 
-productRouter.get('/', (req, res) => {
+productRouter.get('/', filterRoute,(req, res) => {
     productController(req, res);
 });
 
 /* GET product by id. */
-productRouter.all('/:id', (req, res) => {
+productRouter.all('/:id',filterRoute, (req, res) => {
     productController(req, res);
 });
 
 /* POST users register. */
-productRouter.post('/', (req, res) => {
+productRouter.post('/', filterRoute,(req, res) => {
     productController(req, res);
 });
 
