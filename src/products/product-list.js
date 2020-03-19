@@ -61,6 +61,9 @@ export default function makeProductList() {
     }
 
     // todo:
-    async function updateProduct() {
+    async function updateProduct({id,body}) {
+
+        return Product.findByIdAndUpdate(id,body,{new: true});
+
     }
 }

@@ -61,6 +61,7 @@ export default function makeCategoryList() {
     }
 
     // todo:
-    async function updateCategory() {
+    async function updateCategory({id,body}) {
+        return Category.findByIdAndUpdate(id,body,{new: true});
     }
 }
