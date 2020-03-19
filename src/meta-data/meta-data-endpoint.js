@@ -5,26 +5,24 @@ export default function makeMetaDataEndpointHandler({
     metaDataList
 }) {
     return async function handle(httpRequest) {
-        if (httpRequest.method === 'GET' && httpRequest.path === `/discount-codes/${httpRequest.pathParams.id}`) {
-            return getDiscount(httpRequest);
-        } else {
-            switch (httpRequest.method) {
-            case 'GET':
-                return getAllDiscounts();
-            case 'POST':
-                return addDiscount(httpRequest);
-            case 'PUT':
-                return updateDiscount(httpRequest);
-            case 'DELETE':
-                return removeDiscount(httpRequest);
-            default:
-                return objectHandler({
-                    code: HttpResponseType.METHOD_NOT_ALLOWED,
-                    message: `${httpRequest.method} method not allowed`
-                });
+        switch (httpRequest.method) {
+        case 'GET':
+            if (httpRequest.pathParams && httpRequest.path === `/discount-codes/${httpRequest.pathParams.id}`) {
+                return getDiscount(httpRequest);
             }
+            return getAllDiscounts();
+        case 'POST':
+            return addDiscount(httpRequest);
+        case 'PUT':
+            return updateDiscount(httpRequest);
+        case 'DELETE':
+            return removeDiscount(httpRequest);
+        default:
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
+            });
         }
-
     };
 
     async function getAllDiscounts() {
@@ -78,8 +76,8 @@ export default function makeMetaDataEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    data: `Discount code '${result.discountCode}' added successful`,
-                    message: ''
+                    data: result,
+                    message: `Discount '${result.discountCode}' added successful`
                 });
 
             } else {
@@ -109,8 +107,8 @@ export default function makeMetaDataEndpointHandler({
                 if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
-                        data: `Discount code '${id}' updated successful`,
-                        message: ''
+                        data: result,
+                        message: `Discount '${id}' updated successful`
                     });
                 } else {
                     return objectHandler({
@@ -140,13 +138,13 @@ export default function makeMetaDataEndpointHandler({
             if (result && result.deletedCount) {
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    data: `'${id}' record is deleted successful`,
-                    message: ''
+                    data: result,
+                    message: `Discount '${id}' record is deleted successful`
                 });
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Requested '${id}' not found in discount codes`
+                    message: `Requested discount '${id}' not found in discount codes`
                 });
             }
         } else {

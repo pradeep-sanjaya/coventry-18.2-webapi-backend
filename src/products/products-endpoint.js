@@ -10,6 +10,9 @@ export default function makeProductsEndpointHandler({
         case 'POST':
             return addProduct(httpRequest);
         case 'GET':
+            if (httpRequest.queryParams && httpRequest.queryParams.category) {
+                return getProductByCategory(httpRequest);
+            }
             return getProducts(httpRequest);
         case 'DELETE':
             return deleteProduct(httpRequest);
@@ -52,7 +55,7 @@ export default function makeProductsEndpointHandler({
                 } else {
                     return objectHandler({
                         code: HttpResponseType.NOT_FOUND,
-                        message: `Requested '${pathParams.id}' not found in products`
+                        message: `Requested product '${pathParams.id}' not found in products`
                     });
                 }
             } catch (error) {
@@ -81,6 +84,7 @@ export default function makeProductsEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
+                    data: data,
                     message: `'${data.name}' created successful`
                 });
 
@@ -107,13 +111,13 @@ export default function makeProductsEndpointHandler({
             if (result && result.deletedCount) {
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    data: `'${pathParams.id}' record is deleted successful`,
-                    message: ''
+                    data: result,
+                    message: `Product '${pathParams.id}' deleted successful`
                 });
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Requested '${pathParams.id}' not found in products`
+                    message: `Requested product '${pathParams.id}' not found in products`
                 });
             }
         } catch (error) {
@@ -133,12 +137,29 @@ export default function makeProductsEndpointHandler({
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: product,
-                message: ''
+                message: `Product '${id}' updated successful`
             });
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
                 message: error.code === 11000 ? 'Product is already exists' : error.name === 'CastError' ? 'Product not found' : error.message
+            });
+        }
+    }
+
+    async function getProductByCategory(httpRequest) {
+        const { category } = httpRequest.queryParams;
+        try {
+            let products = await productList.getProductByCategory(category);
+            return objectHandler({
+                status: HttpResponseType.SUCCESS,
+                data: products,
+                message: ''
+            });
+        } catch (error) {
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
             });
         }
     }

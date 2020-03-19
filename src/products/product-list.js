@@ -4,9 +4,9 @@ export default function makeProductList() {
     return Object.freeze({
         addProduct,
         getAllProducts,
+        getProductByCategory,
         findProductById,
         removeProduct,
-        replaceProduct,
         updateProduct
     });
 
@@ -25,6 +25,20 @@ export default function makeProductList() {
     async function addProduct(product) {
         try {
             return new Product(product).save();
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function getProductByCategory(category) {
+        try {
+            return Product.find({
+                category: category
+            }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }
@@ -56,14 +70,13 @@ export default function makeProductList() {
         }
     }
 
-    // todo:
-    async function replaceProduct() {
-    }
-
-    // todo:
     async function updateProduct({ id, body }) {
         try {
-            return Product.findByIdAndUpdate(id, body, { new: true });
+            return Product.findByIdAndUpdate(id, body, { new: true }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }
