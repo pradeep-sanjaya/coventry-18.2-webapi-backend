@@ -55,7 +55,6 @@ export default function makeAuthList() {
                     { new: true });
             }
             return false;
-
         } catch (error) {
             return error;
         }

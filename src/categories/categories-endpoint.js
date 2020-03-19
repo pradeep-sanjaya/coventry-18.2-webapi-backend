@@ -14,6 +14,8 @@ export default function makeCategoriesEndpointHandler({
             return getCategories(httpRequest);
         case 'DELETE':
             return deleteCategory(httpRequest);
+        case 'PUT':
+            return updateCategory(httpRequest);
         default:
             return objectHandler({
                 code: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -23,12 +25,12 @@ export default function makeCategoriesEndpointHandler({
     };
 
     async function addCategory(httpRequest) {
+        const { name, imageUrl } = httpRequest.body;
         try {
-            const body = httpRequest.body;
-            if (body) {
+            if (httpRequest.body) {
                 const categoryObj = {
-                    name: body['name'],
-                    imageUrl: encodeUrl(body['imageUrl'])
+                    name,
+                    imageUrl: encodeUrl(imageUrl)
                 };
 
                 let data = await categoryList.addCategory(categoryObj);
@@ -47,7 +49,7 @@ export default function makeCategoriesEndpointHandler({
             console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.message
+                message: error.code === 11000 ? `Category ${name} is already exists` : error.message
             });
         }
     }
@@ -116,6 +118,26 @@ export default function makeCategoriesEndpointHandler({
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
+            });
+        }
+    }
+
+    async function updateCategory(httpRequest) {
+        const { id } = httpRequest.pathParams || '';
+        const { body } = httpRequest;
+        try {
+            let category = await categoryList.updateCategory({ id, body });
+            return objectHandler({
+                status: HttpResponseType.SUCCESS,
+                data: category,
+                message: ''
+            });
+
+        } catch (error) {
+
+            return objectHandler({
+                code: HttpResponseType.NOT_FOUND,
+                message: error.code === 11000 ? 'Category is already exists' : error.name === 'CastError' ? 'Category not found' : error.message
             });
         }
     }

@@ -61,6 +61,11 @@ export default function makeProductList() {
     }
 
     // todo:
-    async function updateProduct() {
+    async function updateProduct({ id, body }) {
+        try {
+            return Product.findByIdAndUpdate(id, body, { new: true });
+        } catch (error) {
+            return error;
+        }
     }
 }

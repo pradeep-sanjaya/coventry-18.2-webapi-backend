@@ -32,36 +32,36 @@ export default function makeAuthEndPointHandler({
     async function loginUser(httpRequest) {
         try {
             let validPassword = false;
-            const body = httpRequest.body;
-
-            if (body) {
+            const { email, password } = httpRequest.body;
+            if (email) {
                 let user = await userList.findByEmail({
-                    email: body['email']
+                    email
                 });
 
                 if (user) {
                     validPassword = await hashValidator({
-                        password: body['password'],
+                        password,
                         hash: user.password
                     });
                 }
 
                 if (validPassword) {
                     let accessToken = await jwtHandler(user);
+                    const { _id, firstName, lastName } = user;
 
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: {
-                            _id: user._id,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            accessToken: accessToken
+                            _id,
+                            firstName,
+                            lastName,
+                            accessToken
                         },
                         message: 'Login successful'
                     });
                 } else {
                     return objectHandler({
-                        code: HttpResponseType.NOT_FOUND,
+                        code: HttpResponseType.FORBIDDEN,
                         message: 'Invalid email or password'
                     });
                 }
@@ -81,18 +81,18 @@ export default function makeAuthEndPointHandler({
     }
 
     async function registerUser(httpRequest) {
+        const { password, email, role, gender, firstName, lastName } = httpRequest.body;
         try {
-            const body = httpRequest.body;
-            if (body) {
+            if (httpRequest.body) {
                 const userObj = {
                     password: hasher({
-                        password: body['password'],
+                        password
                     }),
-                    email: body['email'],
-                    role: body['role'],
-                    gender: body['gender'],
-                    firstName: body['firstName'],
-                    lastName: body['lastName']
+                    email,
+                    role,
+                    gender,
+                    firstName,
+                    lastName
                 };
 
                 let user = await userList.addUser(userObj);
@@ -118,7 +118,7 @@ export default function makeAuthEndPointHandler({
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.message
+                message: error.code === 11000 ? `User ${firstName} is already exists`: error.message
             });
         }
     }

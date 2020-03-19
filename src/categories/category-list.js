@@ -60,7 +60,11 @@ export default function makeCategoryList() {
     async function replaceCategory() {
     }
 
-    // todo:
-    async function updateCategory() {
+    async function updateCategory({ id, body }) {
+        try {
+            return Category.findByIdAndUpdate(id, body, { new: true });
+        } catch (error) {
+            return error;
+        }
     }
 }
