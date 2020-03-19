@@ -5,21 +5,31 @@ export default function makeMetaDataEndpointHandler({
     metaDataList
 }) {
     return async function handle(httpRequest) {
-        switch (httpRequest.path) {
-        case '/secret-questions':
-            return getSecretQuestions();
-        default:
-            return objectHandler({
-                code: HttpResponseType.METHOD_NOT_ALLOWED,
-                message: `${httpRequest.method} method not allowed`
-            });
+        if (httpRequest.method === 'GET' && httpRequest.path === `/discount-codes/${httpRequest.pathParams.id}`) {
+            return getDiscount(httpRequest);
+        } else {
+            switch (httpRequest.method) {
+            case 'GET':
+                return getAllDiscounts();
+            case 'POST':
+                return addDiscount(httpRequest);
+            case 'PUT':
+                return updateDiscount(httpRequest);
+            case 'DELETE':
+                return removeDiscount(httpRequest);
+            default:
+                return objectHandler({
+                    code: HttpResponseType.METHOD_NOT_ALLOWED,
+                    message: `${httpRequest.method} method not allowed`
+                });
+            }
         }
+
     };
 
-    async function getSecretQuestions() {
-        let result = null;
+    async function getAllDiscounts() {
         try {
-            result = await metaDataList.getSecretQuestions();
+            const result = await metaDataList.getAllDiscounts();
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: result,
@@ -29,6 +39,120 @@ export default function makeMetaDataEndpointHandler({
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
+            });
+        }
+    }
+
+    async function getDiscount(httpRequest) {
+        try {
+            const { id } = httpRequest.pathParams;
+            if (id) {
+                const result = await metaDataList.findByDiscountId(id);
+
+                if (result) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.CLIENT_ERROR,
+                        message: `Provided discount id '${id}' is missing or invalid`
+                    });
+                }
+            }
+        } catch (error) {
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
+            });
+        }
+    }
+
+    async function addDiscount(httpRequest) {
+        const { discountCode, deductiblePercentage } = httpRequest.body;
+        try {
+            if (discountCode && deductiblePercentage) {
+                const result = await metaDataList.addDiscountCode({ discountCode, deductiblePercentage });
+
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: `Discount code '${result.discountCode}' added successful`,
+                    message: ''
+                });
+
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.CLIENT_ERROR,
+                    message: 'Required fields are missing or invalid'
+                });
+            }
+        } catch (error) {
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: error.code === 11000 ? `Discount code '${discountCode}' is already exists` : error.message
+            });
+        }
+    }
+
+    async function updateDiscount(httpRequest) {
+        const { id } = httpRequest.pathParams;
+        const { discountCode, deductiblePercentage } = httpRequest.body;
+        if (id && discountCode && deductiblePercentage) {
+            try {
+                const result = await metaDataList.updateDiscount(id, {
+                    discountCode,
+                    deductiblePercentage
+                });
+
+                if (result) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: `Discount code '${id}' updated successful`,
+                        message: ''
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.CLIENT_ERROR,
+                        message: 'Required fields are missing or invalid'
+                    });
+                }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
+        } else {
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: 'Required fields are missing or invalid'
+            });
+        }
+    }
+
+    async function removeDiscount(httpRequest) {
+        const { id } = httpRequest.pathParams;
+
+        if (id) {
+            let result = await metaDataList.removeDiscount(id);
+            if (result && result.deletedCount) {
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: `'${id}' record is deleted successful`,
+                    message: ''
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Requested '${id}' not found in discount codes`
+                });
+            }
+        } else {
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: 'Required path parameter missing or invalid'
             });
         }
     }
