@@ -49,7 +49,7 @@ export default function makeCategoriesEndpointHandler({
             console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.code === 11000 ? `Category ${name} is already exists` : error.message
+                message: error.code === 11000 ? `Category '${name}' is already exists` : error.message
             });
         }
     }
