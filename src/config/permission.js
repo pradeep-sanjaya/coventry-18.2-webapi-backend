@@ -7,7 +7,7 @@ let permission = {
     customer:{
         product:['view'],
         category:['view'],
-        user:[]
+        user:['view']
     },
 };
 
