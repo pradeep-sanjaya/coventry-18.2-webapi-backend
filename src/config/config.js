@@ -7,7 +7,9 @@ let config = {
     apiPort: process.env.WEB_PORT || 9090,
     jwtSecret: process.env.JWT_SECRET_KEY,
     saltRounds: process.env.BCRYPT_ROUNDS,
-    sendGridApiKey: process.env.SENDGRID_API_KEY
+    sendGridApiKey: process.env.SENDGRID_API_KEY,
+    adminEmail: process.env.ADMIN_EMAIL,
+    clientHost: process.env.CLIENT_HOST // todo: should be update current host
 };
 
 export default config;

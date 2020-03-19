@@ -1,7 +1,7 @@
 import { encodeUrl } from '../helpers/utilities/url-parser';
+import { objectHandler } from '../helpers/utilities/normalize-request';
 
 import HttpResponseType from '../models/http-response-type';
-import {objectHandler} from '../helpers/utilities/normalize-request';
 
 export default function makeCategoriesEndpointHandler({
     categoryList
@@ -25,13 +25,12 @@ export default function makeCategoriesEndpointHandler({
     };
 
     async function addCategory(httpRequest) {
-        const {name,imageUrl} = httpRequest.body;
+        const { name, imageUrl } = httpRequest.body;
         try {
             if (httpRequest.body) {
-
                 const categoryObj = {
                     name,
-                    imageUrl:encodeUrl(imageUrl)
+                    imageUrl: encodeUrl(imageUrl)
                 };
 
                 let data = await categoryList.addCategory(categoryObj);
@@ -43,13 +42,14 @@ export default function makeCategoriesEndpointHandler({
             } else {
                 return objectHandler({
                     code: HttpResponseType.CLIENT_ERROR,
-                    message: 'Request body does not contain a body.'
+                    message: 'Request body does not contain a body'
                 });
             }
         } catch (error) {
+            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.code === 11000 ? `Category ${name} is exists.`: error.message
+                message: error.code === 11000 ? `Category ${name} is already exists` : error.message
             });
         }
     }
@@ -114,28 +114,30 @@ export default function makeCategoriesEndpointHandler({
                 });
             }
         } catch (error) {
+            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
             });
         }
     }
+
     async function updateCategory(httpRequest) {
         const { id } = httpRequest.pathParams || '';
         const { body } = httpRequest;
         try {
-            let category = await categoryList.updateCategory({id,body});
+            let category = await categoryList.updateCategory({ id, body });
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: category,
                 message: ''
             });
 
-        }catch (error) {
+        } catch (error) {
 
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
-                message:error.code === 11000 ? 'Category already exists..': error.name === 'CastError' ? 'Category not found.' : error.message
+                message: error.code === 11000 ? 'Category is already exists' : error.name === 'CastError' ? 'Category not found' : error.message
             });
         }
     }

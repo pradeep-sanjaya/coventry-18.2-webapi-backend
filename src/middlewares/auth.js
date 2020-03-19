@@ -13,12 +13,18 @@ export default function authenticateJWT(req, res, next) {
         const token = authHeader.split(' ')[1];
         jwt.verify(token, config.jwtSecret, (error, user) => {
             if (error) {
-                return errorResponse(res, HttpResponseType.FORBIDDEN, error.message);
+                return errorResponse(res, {
+                    code: HttpResponseType.FORBIDDEN,
+                    message: error.message
+                });
             }
             req.user = user;
             next();
         });
     } else {
-        return errorResponse(res, HttpResponseType.AUTH_REQUIRED, 'Unauthorized to access this resource');
+        return errorResponse(res, {
+            code: HttpResponseType.AUTH_REQUIRED,
+            message: 'Unauthorized to access this resource'
+        });
     }
 }

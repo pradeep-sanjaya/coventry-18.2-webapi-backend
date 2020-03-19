@@ -3,10 +3,10 @@ import bcrypt from 'bcrypt';
 export default function hashValue({
     password
 }) {
-    if(password){
+    if (password) {
         return bcrypt.hashSync(password, 10);
-    } else{
-        throw Error('password is required');
+    } else {
+        throw Error('Password field is required');
     }
 
 }

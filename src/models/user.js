@@ -31,6 +31,10 @@ let userSchema = UserSchema({
         type: String,
         required: true,
         enum: ['Admin', 'Customer']
+    },
+    resetToken: {
+        type: String,
+        default: null
     }
 });
 

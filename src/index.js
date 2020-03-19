@@ -34,7 +34,10 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api-docs', apiDocsRouter);
 
 app.all('*', (req, res) => {
-    return errorResponse(res, HttpResponseType.NOT_FOUND, 'Request URL not found');
+    return errorResponse(res, {
+        code: HttpResponseType.NOT_FOUND, message:
+            'Request URL not found'
+    });
 });
 
 app.listen(config.apiPort, () => console.log(`Listening on port ${config.apiPort}`));

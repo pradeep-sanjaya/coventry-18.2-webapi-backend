@@ -9,7 +9,8 @@ export default async function initializeDB() {
     mongoose.connect(dbUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        useCreateIndex: true
+        useCreateIndex: true,
+        useFindAndModify: false
     }).then(() => {
         logger().info(`Connected to  ${dbUrl}`);
 

@@ -1,12 +1,6 @@
 import HttpResponseType from '../models/http-response-type';
 import { encodeUrl } from '../helpers/utilities/url-parser';
-
-function objectHandler(data) {
-    return {
-        headers: { 'Content-Type': 'application/json' },
-        data: data
-    };
-}
+import { objectHandler } from '../helpers/utilities/normalize-request';
 
 export default function makeProductsEndpointHandler({
     productList
@@ -71,7 +65,7 @@ export default function makeProductsEndpointHandler({
     }
 
     async function addProduct(httpRequest) {
-        const {name,category,qty,isAvailable,price,imageUrl} = httpRequest.body;
+        const { name, category, qty, isAvailable, price, imageUrl } = httpRequest.body;
         try {
             if (httpRequest.body) {
                 const productObj = {
@@ -99,7 +93,7 @@ export default function makeProductsEndpointHandler({
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.code === 11000 ? `Product ${name} is exists.`: error.message
+                message: error.code === 11000 ? `Product ${name} is already  exists` : error.message
             });
         }
     }
@@ -123,30 +117,28 @@ export default function makeProductsEndpointHandler({
                 });
             }
         } catch (error) {
+            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
             });
         }
     }
+
     async function updateProduct(httpRequest) {
         const { id } = httpRequest.pathParams || '';
         const { body } = httpRequest;
         try {
-            let product = await productList.updateProduct({id,body});
+            let product = await productList.updateProduct({ id, body });
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: product,
                 message: ''
             });
-
-        }catch (error) {
-
+        } catch (error) {
             return objectHandler({
-
                 code: HttpResponseType.NOT_FOUND,
-                message:error.code === 11000 ? 'Product already exists..': error.name === 'CastError' ? 'Product not found.' : error.message
-
+                message: error.code === 11000 ? 'Product is already exists' : error.name === 'CastError' ? 'Product not found' : error.message
             });
         }
     }
