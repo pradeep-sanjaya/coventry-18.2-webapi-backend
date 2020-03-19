@@ -37,6 +37,7 @@ export default function makeCategoriesEndpointHandler({
 
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
+                    data: data,
                     message: `${data.name} created successful`
                 });
             } else {
@@ -104,13 +105,13 @@ export default function makeCategoriesEndpointHandler({
             if (result && result.deletedCount) {
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
-                    data: `'${pathParams.id}' record is deleted successful`,
-                    message: ''
+                    data: result,
+                    message: `Category '${pathParams.id}' is deleted successful`
                 });
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Requested '${pathParams.id}' not found in categories`
+                    message: `Requested category '${pathParams.id}' not found in categories`
                 });
             }
         } catch (error) {
@@ -130,11 +131,10 @@ export default function makeCategoriesEndpointHandler({
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: category,
-                message: ''
+                message: `Category '${id}' updated successful`
             });
 
         } catch (error) {
-
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
                 message: error.code === 11000 ? 'Category is already exists' : error.name === 'CastError' ? 'Category not found' : error.message

@@ -6,7 +6,6 @@ export default function makeCategoryList() {
         findCategoryById,
         getAllCategories,
         removeCategory,
-        replaceCategory,
         updateCategory
     });
 
@@ -56,13 +55,13 @@ export default function makeCategoryList() {
         }
     }
 
-    // todo:
-    async function replaceCategory() {
-    }
-
     async function updateCategory({ id, body }) {
         try {
-            return Category.findByIdAndUpdate(id, body, { new: true });
+            return Category.findByIdAndUpdate(id, body, { new: true }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }
