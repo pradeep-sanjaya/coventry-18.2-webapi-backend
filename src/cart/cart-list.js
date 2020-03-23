@@ -1,0 +1,38 @@
+import Product from '../models/product';
+import CartItem from '../models/cart-item';
+
+export default function makeCartList() {
+    return Object.freeze({
+        addTempProducts,
+        getTempProducts,
+        updateTempProducts,
+        findProductsById
+    });
+
+    async function addTempProducts(data) {
+        try {
+            return new CartItem(data).save();
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function getTempProducts(userId) {
+        try {
+            return CartItem.findOne(userId);
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function findProductsById(productId) {
+        try {
+            return Product.findOne({ _id: productId });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    // TODO: to be implement for shopping cart update events
+    async function updateTempProducts() {}
+}
