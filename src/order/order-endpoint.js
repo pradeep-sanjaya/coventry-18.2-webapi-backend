@@ -2,7 +2,7 @@ import { objectHandler } from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 
 export default function makeOrderEndPointHandler({
-    orderList
+    orderList,cartList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -19,49 +19,59 @@ export default function makeOrderEndPointHandler({
     };
 
     async function addOrderDetails(httpRequest) {
-        const { userId, paymentType, deliveryAddress, prices, products } = httpRequest.body;
+        const { userId, paymentType, deliveryAddress } = httpRequest.body;
 
-        if (httpRequest.body) {
-            try {
-                let object = {};
-                for (let i = 0; i < products.length; i++) {
-                    object = {
-                        id: products[i].productId,
-                        selectedQty: products[i].selectedQty
+        let cartModel = await cartList.getTempProducts({userId});
+
+        if(cartModel) {
+            const {selected,totalPrice} = cartModel;
+            if (httpRequest.body) {
+                try {
+
+                    for (let i = 0; i < selected.length; i++) {
+                        let object = {
+                            id: selected[i].productId,
+                            selectedQty: selected[i].selectedQty
+                        };
+                        await updateProductQuantities(object);
+                    }
+
+                    const userStatus = await removeUserCart(userId);
+
+                    if (!userStatus && !userStatus.deleteCount) {
+                        return;
+                    }
+
+                    const order = {
+                        userId,
+                        paymentType,
+                        deliveryAddress,
+                        totalPrice,
+                        products:selected
                     };
-                   // await updateProductQuantities(object);
+
+                    const result = await orderList.addOrderProducts(order);
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: 'Order created successful'
+                    });
+                } catch (error) {
+                    return objectHandler({
+                        code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                        message: error.message
+                    });
                 }
-
-                const userStatus = await removeUserCart(userId);
-
-                if (!userStatus && !userStatus.deleteCount) {
-                    return;
-                }
-
-                const order = {
-                    userId,
-                    paymentType,
-                    deliveryAddress,
-                    prices,
-                    products
-                };
-
-                const result = await orderList.addOrderProducts(order);
+            } else {
                 return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: result,
-                    message: 'Order created successful'
-                });
-            } catch (error) {
-                return objectHandler({
-                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                    message: error.message
+                    code: HttpResponseType.CLIENT_ERROR,
+                    message: 'Request body does not contain required fields'
                 });
             }
-        } else {
+        }else{
             return objectHandler({
-                code: HttpResponseType.CLIENT_ERROR,
-                message: 'Request body does not contain required fields'
+                code: HttpResponseType.NOT_FOUND,
+                message: 'Something went wrong cart not found.'
             });
         }
     }

@@ -48,24 +48,22 @@ export default function makeCartList() {
             await Product.findOne({ _id: id }, (err, productObj) => {
                 product = productObj;
             });
-
             if (product) {
                 qty = product.qty - selectedQty;
             }
 
             if (qty === 0) {
-                return Product.findOneAndUpdate(id,
-                    { $set: { qty, isAvailable: false } },
+                return Product.findOneAndUpdate({_id:id},
+                    { qty, isAvailable: false },
                     { new: true });
             }
 
             if (qty > 0) {
-                return Product.findOneAndUpdate(id,
-                    { $set: { qty } },
+                return Product.findOneAndUpdate({_id:id},
+                    { qty } ,
                     { new: true });
             }
         } catch (error) {
-            console.log(error);
             return error;
         }
     }

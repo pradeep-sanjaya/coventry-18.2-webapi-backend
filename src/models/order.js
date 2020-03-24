@@ -28,24 +28,28 @@ let orderSchema = OrderSchema({
             minlength: 5
         }
     },
-    prices: {
-        discountCode: {
-            type: String,
-            required: true
-        },
-        discountsDeducted: {
-            type: Number,
-            required: true
-        },
-        grossTotalPrice: {
-            type: Number,
-            required: true
-        },
-        netTotalPrice: {
-            type: Number,
-            required: true
-        }
+    totalPrice:{
+        type:Number,
+        required:true
     },
+    // prices: {
+    //     discountCode: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     discountsDeducted: {
+    //         type: Number,
+    //         required: true
+    //     },
+    //     grossTotalPrice: {
+    //         type: Number,
+    //         required: true
+    //     },
+    //     netTotalPrice: {
+    //         type: Number,
+    //         required: true
+    //     }
+    // },
     products: [
         {
             _id: false,
