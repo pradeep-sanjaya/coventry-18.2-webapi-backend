@@ -23,11 +23,34 @@ export default function makeCartEndPointHandler({
     async function addCartProducts(httpRequest) {
         const { userId, selected } = httpRequest.body;
 
-        if (httpRequest.body) {
+        if (userId && selected) {
             try {
+                const isValid = await cartList.findUserById(userId);
+                let totalPrice = 0;
+
+                if (!isValid) {
+                    return objectHandler({
+                        code: HttpResponseType.CLIENT_ERROR,
+                        message: `Invalid user id '${userId}'`
+                    });
+                }
+
+                for (let i = 0; i < selected.length; i++) {
+                    let { price, qty } = await cartList.findProductsById(selected[i].productId);
+
+                    if (qty < selected[i].selectedQty) {
+                        return objectHandler({
+                            code: HttpResponseType.CLIENT_ERROR,
+                            message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
+                        });
+                    }
+                    totalPrice += (price * selected[i].selectedQty);
+                }
+
                 const data = {
                     userId: userId,
                     selected: selected,
+                    totalPrice,
                     products: []
                 };
                 const result = await cartList.addTempProducts(data);
@@ -39,7 +62,7 @@ export default function makeCartEndPointHandler({
             } catch (error) {
                 return objectHandler({
                     code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                    message: error.message
+                    message: error.code === 11000 ? `Cart is already exists for user id '${userId}'` : error.message
                 });
             }
         } else {
@@ -60,13 +83,13 @@ export default function makeCartEndPointHandler({
                 let selectedQty = 0;
 
                 const cart = await cartList.getTempProducts({ userId });
-                const { selected } = cart;
+
+                const { selected, totalPrice } = cart || null;
 
                 if (cart && (selected && selected.length)) {
                     for (let i = 0; i < selected.length; i++) {
                         product = await cartList.findProductsById(selected[i].productId);
                         selectedQty = selected[i].selectedQty;
-                        //TODO: value assigned but response not contains selected quantity
                         Object.assign(product, { selectedQty });
 
                         if (product) {
@@ -80,9 +103,6 @@ export default function makeCartEndPointHandler({
                     });
                 }
 
-                const totalPrice = products.reduce((acc, product) => {
-                    return acc + (product.price * product.selectedQty);
-                }, 0);
                 const cartItems = {
                     userId,
                     selected: [],
@@ -110,9 +130,32 @@ export default function makeCartEndPointHandler({
 
         if (selected && userId) {
             try {
+                const isValid = await cartList.findUserById(userId);
+                let totalPrice = 0;
+
+                if (!isValid) {
+                    return objectHandler({
+                        code: HttpResponseType.CLIENT_ERROR,
+                        message: `Invalid user id '${userId}'`
+                    });
+                }
+
+                for (let i = 0; i < selected.length; i++) {
+                    let { price, qty } = await cartList.findProductsById(selected[i].productId);
+
+                    if (qty < selected[i].selectedQty) {
+                        return objectHandler({
+                            code: HttpResponseType.CLIENT_ERROR,
+                            message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
+                        });
+                    }
+                    totalPrice += (price * selected[i].selectedQty);
+                }
+
                 const data = {
                     userId,
-                    selected
+                    selected,
+                    totalPrice
                 };
 
                 const result = await cartList.updateTempProducts(data);
