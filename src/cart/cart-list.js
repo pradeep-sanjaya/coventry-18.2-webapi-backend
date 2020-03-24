@@ -27,7 +27,7 @@ export default function makeCartList() {
 
     async function findProductsById(productId) {
         try {
-            return Product.findOne({ _id: productId });
+            return Product.findOne({ _id: productId }).lean();
         } catch (error) {
             return error;
         }

@@ -29,7 +29,7 @@ export default function makeOrderEndPointHandler({
                         id: products[i].productId,
                         selectedQty: products[i].selectedQty
                     };
-                    await updateProductQuantities(object);
+                   // await updateProductQuantities(object);
                 }
 
                 const userStatus = await removeUserCart(userId);

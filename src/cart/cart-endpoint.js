@@ -83,7 +83,6 @@ export default function makeCartEndPointHandler({
                 const totalPrice = products.reduce((acc, product) => {
                     return acc + (product.price * product.selectedQty);
                 }, 0);
-
                 const cartItems = {
                     userId,
                     selected: [],

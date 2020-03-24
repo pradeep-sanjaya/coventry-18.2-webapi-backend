@@ -51,8 +51,7 @@ let orderSchema = OrderSchema({
             _id: false,
             productId: {
                 type: String,
-                required: true,
-                unique: true
+                required: true
             },
             selectedQty: {
                 type: Number,
