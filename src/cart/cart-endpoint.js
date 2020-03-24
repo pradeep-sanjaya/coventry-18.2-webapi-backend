@@ -50,7 +50,7 @@ export default function makeCartEndPointHandler({
                 const data = {
                     userId: userId,
                     selected: selected,
-                    totalPrice,
+                    totalPrice: totalPrice.toFixed(2),
                     products: []
                 };
                 const result = await cartList.addTempProducts(data);
@@ -155,7 +155,7 @@ export default function makeCartEndPointHandler({
                 const data = {
                     userId,
                     selected,
-                    totalPrice
+                    totalPrice: totalPrice.toFixed(2)
                 };
 
                 const result = await cartList.updateTempProducts(data);
