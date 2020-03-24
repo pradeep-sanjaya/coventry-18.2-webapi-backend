@@ -9,4 +9,8 @@ orderRouter.post('/', authenticateJWT, (req, res) => {
     orderController(req, res);
 });
 
+orderRouter.get('/:userId', authenticateJWT, (req, res) => {
+    orderController(req, res);
+});
+
 module.exports = orderRouter;

@@ -42,6 +42,11 @@ export default function makeCartEndPointHandler({
                     message: error.message
                 });
             }
+        } else {
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: 'Request body is missing or invalid'
+            });
         }
     }
 
@@ -57,17 +62,22 @@ export default function makeCartEndPointHandler({
                 const cart = await cartList.getTempProducts({ userId });
                 const { selected } = cart;
 
-                if (selected.length) {
+                if (cart && (selected && selected.length)) {
                     for (let i = 0; i < selected.length; i++) {
                         product = await cartList.findProductsById(selected[i].productId);
                         selectedQty = selected[i].selectedQty;
                         //TODO: value assigned but response not contains selected quantity
-                        Object.assign(product, { selectedQty: selectedQty });
+                        Object.assign(product, { selectedQty });
 
                         if (product) {
                             products.push(product);
                         }
                     }
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Cart data not available for user id '${userId}'`
+                    });
                 }
 
                 const totalPrice = products.reduce((acc, product) => {
@@ -95,6 +105,42 @@ export default function makeCartEndPointHandler({
         }
     }
 
-    //TODO: Cart update event
-    async function updateCartProducts(httpRequest) {}
+    async function updateCartProducts(httpRequest) {
+        const { userId } = httpRequest.pathParams;
+        const { selected } = httpRequest.body;
+
+        if (selected && userId) {
+            try {
+                const data = {
+                    userId,
+                    selected
+                };
+
+                const result = await cartList.updateTempProducts(data);
+
+                if (result) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: `Cart data updated successful for user id '${userId}'`
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Cart not found for user id '${userId}'`
+                    });
+                }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
+        } else {
+            return objectHandler({
+                code: HttpResponseType.CLIENT_ERROR,
+                message: 'Request path params or body is missing or invalid'
+            });
+        }
+    }
 }

@@ -5,8 +5,7 @@ const OrderSchema = mongoose.Schema;
 let orderSchema = OrderSchema({
     userId: {
         type: String,
-        required: true,
-        unique: false
+        required: true
     },
     paymentType: {
         type: String,

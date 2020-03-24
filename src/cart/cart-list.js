@@ -33,6 +33,9 @@ export default function makeCartList() {
         }
     }
 
-    // TODO: to be implement for shopping cart update events
-    async function updateTempProducts() {}
+    async function updateTempProducts({userId, selected}) {
+        return CartItem.findOneAndUpdate(userId,
+            { $set: { selected } },
+            { new: true });
+    }
 }

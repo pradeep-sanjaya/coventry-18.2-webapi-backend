@@ -5,6 +5,8 @@ import CartItem from '../models/cart-item';
 export default function makeCartList() {
     return Object.freeze({
         addOrderProducts,
+        findOneByOrderId,
+        findAllOrdersByUserId,
         updateProductQuantities,
         removeTempProducts
     });
@@ -12,6 +14,27 @@ export default function makeCartList() {
     async function addOrderProducts(data) {
         try {
             return new Order(data).save();
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function findAllOrdersByUserId(userId) {
+        try {
+            return Order.find({ userId }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    //TODO: Deprecated and to be removed
+    async function findOneByOrderId(id) {
+        try {
+            return Order.findOne({ _id: id });
         } catch (error) {
             return error;
         }
