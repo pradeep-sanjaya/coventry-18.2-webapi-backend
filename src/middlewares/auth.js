@@ -4,27 +4,33 @@ import config from '../config/config';
 import HttpResponseType from '../models/http-response-type';
 
 import { errorResponse } from '../helpers/response/response-dispatcher';
+import { bypassHelper } from '../helpers/utilities/bypass';
+
 
 //token check middleware
 export default function authenticateJWT(req, res, next) {
     const authHeader = req.headers.authorization;
 
-    if (authHeader) {
-        const token = authHeader.split(' ')[1];
-        jwt.verify(token, config.jwtSecret, (error, user) => {
-            if (error) {
-                return errorResponse(res, {
-                    code: HttpResponseType.FORBIDDEN,
-                    message: error.message
-                });
-            }
-            req.user = user;
-            next();
-        });
+    if (bypassHelper.shouldBypass(req)) {
+        next();
     } else {
-        return errorResponse(res, {
-            code: HttpResponseType.AUTH_REQUIRED,
-            message: 'Unauthorized to access this resource'
-        });
+        if (authHeader) {
+            const token = authHeader.split(' ')[1];
+            jwt.verify(token, config.jwtSecret, (error, user) => {
+                if (error) {
+                    return errorResponse(res, {
+                        code: HttpResponseType.FORBIDDEN,
+                        message: error.message
+                    });
+                }
+                req.user = user;
+                next();
+            });
+        } else {
+            return errorResponse(res, {
+                code: HttpResponseType.AUTH_REQUIRED,
+                message: 'Unauthorized to access this resource'
+            });
+        }
     }
 }
