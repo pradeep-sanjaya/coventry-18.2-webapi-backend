@@ -4,7 +4,7 @@ import config from '../../config/config';
 import logger from '../logger';
 
 export default async function initializeDB() {
-    const dbUrl = `${config.databaseUrl}/${config.databaseName}`;
+    const dbUrl = `${config.databaseUrl}/${config.databaseName}?retryWrites=true&w=majority`;
 
     mongoose.connect(dbUrl, {
         useNewUrlParser: true,
