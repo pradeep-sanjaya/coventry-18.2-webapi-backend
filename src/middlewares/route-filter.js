@@ -26,30 +26,30 @@ export default function filterRoute(req, res, next) {
                 }
                 const { role } = user;
                 switch (role) {
-                    case 'Admin':
-                        req.user = user;
-                        next();
-                        break;
-                    case 'Customer':
-                        switch (method) {
-                            case 'PUT':
-                            case 'DELETE':
-                            case 'POST':
-                            case 'PATCH':
-                                return errorResponse(res, {
-                                    code: HttpResponseType.FORBIDDEN,
-                                    message: 'Insufficient permissions to access this resource'
-                                });
-                            default:
-                                next();
-                                break;
-                        }
-                        break;
-                    default:
+                case 'Admin':
+                    req.user = user;
+                    next();
+                    break;
+                case 'Customer':
+                    switch (method) {
+                    case 'PUT':
+                    case 'DELETE':
+                    case 'POST':
+                    case 'PATCH':
                         return errorResponse(res, {
                             code: HttpResponseType.FORBIDDEN,
                             message: 'Insufficient permissions to access this resource'
                         });
+                    default:
+                        next();
+                        break;
+                    }
+                    break;
+                default:
+                    return errorResponse(res, {
+                        code: HttpResponseType.FORBIDDEN,
+                        message: 'Insufficient permissions to access this resource'
+                    });
                 }
             });
         } else {
