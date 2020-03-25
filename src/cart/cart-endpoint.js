@@ -2,7 +2,9 @@ import { objectHandler } from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 
 export default function makeCartEndPointHandler({
-    cartList
+    cartList,
+    userList,
+    productList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -25,7 +27,7 @@ export default function makeCartEndPointHandler({
 
         if (userId && selected) {
             try {
-                const isValid = await cartList.findUserById(userId);
+                const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
 
                 if (!isValid) {
@@ -36,7 +38,7 @@ export default function makeCartEndPointHandler({
                 }
 
                 for (let i = 0; i < selected.length; i++) {
-                    let { price, qty } = await cartList.findProductsById(selected[i].productId);
+                    let { price, qty } = await productList.findProductById(selected[i].productId);
 
                     if (qty < selected[i].selectedQty) {
                         return objectHandler({
@@ -88,7 +90,8 @@ export default function makeCartEndPointHandler({
 
                 if (cart && (selected && selected.length)) {
                     for (let i = 0; i < selected.length; i++) {
-                        product = await cartList.findProductsById(selected[i].productId);
+                        product = await productList.findProductById(selected[i].productId);
+                        console.log(product);
                         selectedQty = selected[i].selectedQty;
                         Object.assign(product, { selectedQty });
 
@@ -130,7 +133,7 @@ export default function makeCartEndPointHandler({
 
         if (selected && userId) {
             try {
-                const isValid = await cartList.findUserById(userId);
+                const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
 
                 if (!isValid) {
@@ -141,7 +144,7 @@ export default function makeCartEndPointHandler({
                 }
 
                 for (let i = 0; i < selected.length; i++) {
-                    let { price, qty } = await cartList.findProductsById(selected[i].productId);
+                    let { price, qty } = await productList.findProductById(selected[i].productId);
 
                     if (qty < selected[i].selectedQty) {
                         return objectHandler({
