@@ -46,7 +46,7 @@ export default function makeProductList() {
 
     async function findProductById(id) {
         try {
-            return Product.find({
+            return Product.findOne({
                 _id: id
             }).lean(true).then((product) => {
                 return product;
