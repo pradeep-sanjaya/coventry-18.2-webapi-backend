@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend.git"
+    "url": "git@github.com:pradeep-sanjaya/coventry-18.2-webapi-backend.git"
   },
   "keywords": [
     "Shopping Cart",
@@ -45,7 +45,7 @@
     "dist"
   ],
   "license": "MIT",
-  "homepage": "https://bitbucket.org/ngpsanjaya/coventry-18.2-webapi-backend#readme",
+  "homepage": "https://github.com/pradeep-sanjaya/coventry-18.2-webapi-backend",
   "dependencies": {
     "@sendgrid/mail": "^6.5.4",
     "bcrypt": "^4.0.1",
