@@ -48,7 +48,7 @@ export default function makeProductList() {
         try {
             return Product.find({
                 _id: id
-            }).then((product) => {
+            }).lean(true).then((product) => {
                 return product;
             }).catch((error) => {
                 return error;

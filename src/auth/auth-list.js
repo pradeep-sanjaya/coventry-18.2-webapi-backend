@@ -1,3 +1,5 @@
+import ObjectID from 'mongoose';
+
 import User from '../models/user';
 import hasher from '../helpers/hasher';
 
@@ -5,6 +7,7 @@ export default function makeAuthList() {
     return Object.freeze({
         addUser,
         findByEmail,
+        findUserById,
         resetPassword,
         updateResetToken
     });
@@ -21,6 +24,18 @@ export default function makeAuthList() {
     async function findByEmail(email) {
         try {
             return User.findOne(email);
+        } catch (error) {
+            console.log(error.message);
+            return error;
+        }
+    }
+
+    async function findUserById(userId) {
+        try {
+            const isValid = ObjectID.isValidObjectId(userId);
+            if (isValid) {
+                return User.findOne({ _id: { $eq: userId } });
+            }
         } catch (error) {
             console.log(error.message);
             return error;
@@ -56,6 +71,7 @@ export default function makeAuthList() {
             }
             return false;
         } catch (error) {
+            console.log(error.message);
             return error;
         }
     }
