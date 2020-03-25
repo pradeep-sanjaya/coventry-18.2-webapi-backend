@@ -1,14 +1,12 @@
 import Product from '../models/product';
 import Order from '../models/order';
-import CartItem from '../models/cart-item';
 
 export default function makeCartList() {
     return Object.freeze({
         addOrderProducts,
         findOneByOrderId,
         findAllOrdersByUserId,
-        updateProductQuantities,
-        removeTempProducts
+        updateProductQuantities
     });
 
     async function addOrderProducts(data) {
@@ -63,14 +61,6 @@ export default function makeCartList() {
                     { qty } ,
                     { new: true });
             }
-        } catch (error) {
-            return error;
-        }
-    }
-
-    async function removeTempProducts(userId) {
-        try {
-            return CartItem.deleteOne({ userId });
         } catch (error) {
             return error;
         }

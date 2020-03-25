@@ -1,8 +1,9 @@
-import { objectHandler } from '../helpers/utilities/normalize-request';
+import {objectHandler} from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 
 export default function makeOrderEndPointHandler({
-    orderList,cartList
+    orderList,
+    cartList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -21,10 +22,10 @@ export default function makeOrderEndPointHandler({
     async function addOrderDetails(httpRequest) {
         const { userId, paymentType, deliveryAddress } = httpRequest.body;
 
-        let cartModel = await cartList.getTempProducts({userId});
+        let cart = await cartList.getTempProducts({ userId });
 
-        if(cartModel) {
-            const {selected,totalPrice} = cartModel;
+        if (cart) {
+            const { selected, totalPrice } = cart;
             if (httpRequest.body) {
                 try {
 
@@ -47,7 +48,7 @@ export default function makeOrderEndPointHandler({
                         paymentType,
                         deliveryAddress,
                         totalPrice,
-                        products:selected
+                        products: selected
                     };
 
                     const result = await orderList.addOrderProducts(order);
@@ -68,7 +69,7 @@ export default function makeOrderEndPointHandler({
                     message: 'Request body does not contain required fields'
                 });
             }
-        }else{
+        } else {
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
                 message: 'Something went wrong cart not found.'
@@ -140,7 +141,7 @@ export default function makeOrderEndPointHandler({
 
     async function removeUserCart(userId) {
         try {
-            return await orderList.removeTempProducts(userId);
+            return await cartList.removeTempProducts(userId);
         } catch (error) {
             return error;
         }
