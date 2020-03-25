@@ -3,7 +3,7 @@ import { encodeUrl } from '../helpers/utilities/url-parser';
 import { objectHandler } from '../helpers/utilities/normalize-request';
 
 export default function makeProductsEndpointHandler({
-    productList
+    productList,categoryList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -70,28 +70,38 @@ export default function makeProductsEndpointHandler({
     async function addProduct(httpRequest) {
         const { name, category, qty, isAvailable, price, imageUrl } = httpRequest.body;
         try {
-            if (httpRequest.body) {
-                const productObj = {
-                    name,
-                    category,
-                    qty,
-                    isAvailable,
-                    price,
-                    imageUrl: encodeUrl(imageUrl)
-                };
+            let categoryModel = await categoryList.findCategoryByName(category);
 
-                let data = await productList.addProduct(productObj);
+            if(categoryModel.length) {
+                if (httpRequest.body) {
 
+                    const productObj = {
+                        name,
+                        category,
+                        qty,
+                        isAvailable,
+                        price,
+                        imageUrl: encodeUrl(imageUrl)
+                    };
+
+                    let data = await productList.addProduct(productObj);
+
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: data,
+                        message: `'${data.name}' created successful`
+                    });
+
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.CLIENT_ERROR,
+                        message: 'Request body does not contain a body'
+                    });
+                }
+            }else{
                 return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: data,
-                    message: `'${data.name}' created successful`
-                });
-
-            } else {
-                return objectHandler({
-                    code: HttpResponseType.CLIENT_ERROR,
-                    message: 'Request body does not contain a body'
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Category ${category} not found`
                 });
             }
         } catch (error) {
@@ -121,7 +131,6 @@ export default function makeProductsEndpointHandler({
                 });
             }
         } catch (error) {
-            console.log(error.message);
             return objectHandler({
                 code: HttpResponseType.INTERNAL_SERVER_ERROR,
                 message: error.message
@@ -132,13 +141,26 @@ export default function makeProductsEndpointHandler({
     async function updateProduct(httpRequest) {
         const { id } = httpRequest.pathParams || '';
         const { body } = httpRequest;
+        const { category } = body;
+
         try {
-            let product = await productList.updateProduct({ id, body });
-            return objectHandler({
-                status: HttpResponseType.SUCCESS,
-                data: product,
-                message: `Product '${id}' updated successful`
-            });
+
+            let categoryModel = await categoryList.findCategoryByName(category);
+
+            if(categoryModel.length) {
+                let product = await productList.updateProduct({ id, body });
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: product,
+                    message: `Product '${id}' updated successful.`
+                });
+            }else{
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Category ${category} not found.`
+                });
+            }
+
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
