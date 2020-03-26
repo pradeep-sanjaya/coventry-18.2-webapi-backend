@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 const OrderSchema = mongoose.Schema;
 
 let orderSchema = OrderSchema({
+    timestamp: {
+        type: Number,
+        default: new Date().getTime()
+    },
     userId: {
         type: String,
         required: true

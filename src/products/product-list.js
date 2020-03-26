@@ -70,9 +70,9 @@ export default function makeProductList() {
         }
     }
 
-    async function updateProduct({ id, body }) {
+    async function updateProduct({ id, data }) {
         try {
-            return Product.findByIdAndUpdate(id, body, { new: true }).then((data) => {
+            return Product.findByIdAndUpdate(id, data, { new: true }).then((data) => {
                 return data;
             }).catch((error) => {
                 return error;

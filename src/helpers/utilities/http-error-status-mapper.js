@@ -14,6 +14,8 @@ exports.httpErrorStatusMapper = (statusCode) => {
         return 'CS-4080';
     case 409:
         return 'CS-4090';
+    case 422:
+        return 'CS-4220';
     case 500:
         return 'CS-5000';
     case 502:

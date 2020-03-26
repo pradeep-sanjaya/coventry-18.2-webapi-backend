@@ -125,9 +125,15 @@ export default function makeCategoriesEndpointHandler({
 
     async function updateCategory(httpRequest) {
         const { id } = httpRequest.pathParams || '';
-        const { body } = httpRequest;
+        const { name, imageUrl } = httpRequest.body;
         try {
-            let category = await categoryList.updateCategory({ id, body });
+            const timestamp = new Date().getTime();
+            const data = {
+                timestamp,
+                name,
+                imageUrl
+            };
+            let category = await categoryList.updateCategory({ id, data });
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: category,

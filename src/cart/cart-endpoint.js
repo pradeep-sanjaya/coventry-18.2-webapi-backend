@@ -14,6 +14,8 @@ export default function makeCartEndPointHandler({
             return getCartProducts(httpRequest);
         case 'PUT':
             return updateCartProducts(httpRequest);
+        case 'DELETE':
+            return deleteCart(httpRequest);
         default:
             return objectHandler({
                 code: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -91,7 +93,6 @@ export default function makeCartEndPointHandler({
                 if (cart && (selected && selected.length)) {
                     for (let i = 0; i < selected.length; i++) {
                         product = await productList.findProductById(selected[i].productId);
-                        console.log(product);
                         selectedQty = selected[i].selectedQty;
                         Object.assign(product, { selectedQty });
 
@@ -135,6 +136,7 @@ export default function makeCartEndPointHandler({
             try {
                 const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
+                let selectedData = [];
 
                 if (!isValid) {
                     return objectHandler({
@@ -144,29 +146,45 @@ export default function makeCartEndPointHandler({
                 }
 
                 for (let i = 0; i < selected.length; i++) {
-                    let { price, qty } = await productList.findProductById(selected[i].productId);
+                    let product = await productList.findProductById(selected[i].productId);
 
-                    if (qty < selected[i].selectedQty) {
+                    if (product) {
+                        const data = Object.assign({}, product, { selectedQty: selected[i].selectedQty });
+                        selectedData.push(data);
+                    }
+
+                    if (product.qty < selected[i].selectedQty) {
                         return objectHandler({
                             code: HttpResponseType.CLIENT_ERROR,
                             message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
                         });
                     }
-                    totalPrice += (price * selected[i].selectedQty);
+                    totalPrice += (product.price * selected[i].selectedQty);
                 }
 
+                const timestamp = new Date().getTime();
                 const data = {
-                    userId,
+                    timestamp,
                     selected,
                     totalPrice: totalPrice.toFixed(2)
                 };
 
-                const result = await cartList.updateTempProducts(data);
+                const result = await cartList.updateTempProducts(userId, data);
 
                 if (result) {
+                    const respond = {
+                        _id: result._id,
+                        timestamp: result.timestamp,
+                        totalPrice: result.totalPrice,
+                        userId: result.userId,
+                        selected: selectedData,
+                        products: [],
+                        __v: result.__v
+                    };
+
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
-                        data: result,
+                        data: respond,
                         message: `Cart data updated successful for user id '${userId}'`
                     });
                 } else {
@@ -185,6 +203,33 @@ export default function makeCartEndPointHandler({
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
                 message: 'Request path params or body is missing or invalid'
+            });
+        }
+    }
+
+    async function deleteCart(httpRequest) {
+        const { userId } = httpRequest.pathParams;
+
+        try {
+            let result = await cartList.removeCart(userId);
+
+            if (result && result.deletedCount) {
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: `Cart is deleted for user id '${userId}' successful`
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Requested cart for user id '${userId}' is not available`
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
             });
         }
     }

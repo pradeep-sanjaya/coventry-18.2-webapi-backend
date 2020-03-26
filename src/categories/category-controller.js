@@ -5,6 +5,7 @@ import { successResponse, errorResponse } from '../helpers/response/response-dis
 
 export default function categoryController(req, res) {
     const httpRequest = normalizedRequest(req);
+
     handleCategoryRequest(httpRequest)
         .then(({
             data

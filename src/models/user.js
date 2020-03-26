@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 const UserSchema = mongoose.Schema;
 
 let userSchema = UserSchema({
+    timestamp: {
+        type: Number,
+        default: new Date().getTime()
+    },
     firstName: {
         type: String,
         required: true

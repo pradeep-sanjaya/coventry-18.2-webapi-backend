@@ -5,6 +5,7 @@ import { successResponse, errorResponse } from '../helpers/response/response-dis
 
 export default function productsController(req, res) {
     const httpRequest = normalizedRequest(req);
+
     handleProductRequest(httpRequest)
         .then(({
             data

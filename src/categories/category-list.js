@@ -56,9 +56,9 @@ export default function makeCategoryList() {
         }
     }
 
-    async function updateCategory({ id, body }) {
+    async function updateCategory({ id, data }) {
         try {
-            return Category.findByIdAndUpdate(id, body, { new: true }).then((data) => {
+            return Category.findByIdAndUpdate(id, data, { new: true }).then((data) => {
                 return data;
             }).catch((error) => {
                 return error;
@@ -67,6 +67,7 @@ export default function makeCategoryList() {
             return error;
         }
     }
+
     async function findCategoryByName(name) {
         try {
             return Category.find({

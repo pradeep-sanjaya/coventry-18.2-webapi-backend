@@ -7,10 +7,7 @@ export default function makeMetaDataEndpointHandler({
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
         case 'GET':
-            if (httpRequest.pathParams && httpRequest.path === `/discount-codes/${httpRequest.pathParams.id}`) {
-                return getDiscount(httpRequest);
-            }
-            return getAllDiscounts();
+            return getDiscounts(httpRequest);
         case 'POST':
             return addDiscount(httpRequest);
         case 'PUT':
@@ -25,28 +22,11 @@ export default function makeMetaDataEndpointHandler({
         }
     };
 
-    async function getAllDiscounts() {
-        try {
-            const result = await metaDataList.getAllDiscounts();
-            return objectHandler({
-                status: HttpResponseType.SUCCESS,
-                data: result,
-                message: ''
-            });
-        } catch (error) {
-            return objectHandler({
-                code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message
-            });
-        }
-    }
-
-    async function getDiscount(httpRequest) {
-        try {
-            const { id } = httpRequest.pathParams;
-            if (id) {
-                const result = await metaDataList.findByDiscountId(id);
-
+    async function getDiscounts(httpRequest) {
+        const { discountCode } = httpRequest.pathParams;
+        if (discountCode) {
+            try {
+                const result = await metaDataList.findByDiscountCode({ discountCode });
                 if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
@@ -56,15 +36,29 @@ export default function makeMetaDataEndpointHandler({
                 } else {
                     return objectHandler({
                         code: HttpResponseType.CLIENT_ERROR,
-                        message: `Provided discount id '${id}' is missing or invalid`
+                        message: `Provided discount code '${discountCode}' is missing or invalid`
                     });
                 }
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
             }
-        } catch (error) {
-            return objectHandler({
-                code: HttpResponseType.INTERNAL_SERVER_ERROR,
-                message: error.message
-            });
+        } else {
+            try {
+                const result = await metaDataList.getAllDiscounts();
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: ''
+                });
+            } catch (error) {
+                return objectHandler({
+                    code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                    message: error.message
+                });
+            }
         }
     }
 
@@ -99,10 +93,13 @@ export default function makeMetaDataEndpointHandler({
         const { discountCode, deductiblePercentage } = httpRequest.body;
         if (id && discountCode && deductiblePercentage) {
             try {
-                const result = await metaDataList.updateDiscount(id, {
+                const timestamp = new Date().getTime();
+                const data = {
+                    timestamp,
                     discountCode,
                     deductiblePercentage
-                });
+                };
+                const result = await metaDataList.updateDiscount(id, data);
 
                 if (result) {
                     return objectHandler({

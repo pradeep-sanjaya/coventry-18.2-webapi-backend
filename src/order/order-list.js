@@ -38,7 +38,7 @@ export default function makeCartList() {
         }
     }
 
-    async function updateProductQuantities({ id, selectedQty }) {
+    async function updateProductQuantities({ id, selectedQty, timestamp }) {
         try {
             let product = null;
             let qty = 0;
@@ -51,14 +51,14 @@ export default function makeCartList() {
             }
 
             if (qty === 0) {
-                return Product.findOneAndUpdate({_id:id},
-                    { qty, isAvailable: false },
+                return Product.findOneAndUpdate({ _id: id },
+                    { timestamp, qty, isAvailable: false },
                     { new: true });
             }
 
             if (qty > 0) {
-                return Product.findOneAndUpdate({_id:id},
-                    { qty } ,
+                return Product.findOneAndUpdate({ _id: id },
+                    { timestamp, qty },
                     { new: true });
             }
         } catch (error) {

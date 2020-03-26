@@ -1,11 +1,12 @@
-import handleProductRequest from './';
+import handleMetaDataRequest from './';
 import normalizedRequest from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 import { successResponse, errorResponse } from '../helpers/response/response-dispatcher';
 
 export default function metaDataController(req, res) {
     const httpRequest = normalizedRequest(req);
-    handleProductRequest(httpRequest)
+
+    handleMetaDataRequest(httpRequest)
         .then(({
             data
         }) => {
