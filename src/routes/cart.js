@@ -28,4 +28,10 @@ cartRouter.get('/products/:userId',
         cartController(req, res);
     });
 
+cartRouter.delete('/products/:userId',
+    authenticateJWT,
+    (req, res) => {
+        cartController(req, res);
+    });
+
 module.exports = cartRouter;

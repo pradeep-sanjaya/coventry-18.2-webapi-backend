@@ -14,6 +14,8 @@ export default function makeCartEndPointHandler({
             return getCartProducts(httpRequest);
         case 'PUT':
             return updateCartProducts(httpRequest);
+        case 'DELETE':
+            return deleteCart(httpRequest);
         default:
             return objectHandler({
                 code: HttpResponseType.METHOD_NOT_ALLOWED,
@@ -168,17 +170,18 @@ export default function makeCartEndPointHandler({
                 };
 
                 const result = await cartList.updateTempProducts(userId, data);
-                const respond = {
-                    _id: result._id,
-                    timestamp: result.timestamp,
-                    totalPrice: result.totalPrice,
-                    userId: result.userId,
-                    selected: selectedData,
-                    products: [],
-                    __v: 0
-                };
 
                 if (result) {
+                    const respond = {
+                        _id: result._id,
+                        timestamp: result.timestamp,
+                        totalPrice: result.totalPrice,
+                        userId: result.userId,
+                        selected: selectedData,
+                        products: [],
+                        __v: result.__v
+                    };
+
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: respond,
@@ -200,6 +203,33 @@ export default function makeCartEndPointHandler({
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
                 message: 'Request path params or body is missing or invalid'
+            });
+        }
+    }
+
+    async function deleteCart(httpRequest) {
+        const { userId } = httpRequest.pathParams;
+
+        try {
+            let result = await cartList.removeCart(userId);
+
+            if (result && result.deletedCount) {
+                return objectHandler({
+                    status: HttpResponseType.SUCCESS,
+                    data: result,
+                    message: `Cart is deleted for user id '${userId}' successful`
+                });
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Requested cart for user id '${userId}' is not available`
+                });
+            }
+        } catch (error) {
+            console.log(error.message);
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
             });
         }
     }

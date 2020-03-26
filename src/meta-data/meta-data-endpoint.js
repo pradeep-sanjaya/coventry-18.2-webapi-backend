@@ -23,10 +23,10 @@ export default function makeMetaDataEndpointHandler({
     };
 
     async function getDiscounts(httpRequest) {
-        const { id } = httpRequest.pathParams;
-        if (id) {
+        const { discountCode } = httpRequest.pathParams;
+        if (discountCode) {
             try {
-                const result = await metaDataList.findByDiscountId(id);
+                const result = await metaDataList.findByDiscountCode({ discountCode });
                 if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
@@ -36,7 +36,7 @@ export default function makeMetaDataEndpointHandler({
                 } else {
                     return objectHandler({
                         code: HttpResponseType.CLIENT_ERROR,
-                        message: `Provided discount id '${id}' is missing or invalid`
+                        message: `Provided discount code '${discountCode}' is missing or invalid`
                     });
                 }
             } catch (error) {

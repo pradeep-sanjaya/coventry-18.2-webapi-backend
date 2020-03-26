@@ -211,6 +211,7 @@ function metaDataValidator(route, method) {
                 body('deductiblePercentage')
                     .exists().withMessage('Deductible percentage is required')
                     .isNumeric().withMessage('Deductible percentage should be Number')
+                    .isLength({min: 0.00, max: 1.00}).withMessage('Deductible percentage should be between 0.00 and 1.00')
             ];
         case 'PUT':
             return [
@@ -219,6 +220,7 @@ function metaDataValidator(route, method) {
                 body('deductiblePercentage')
                     .exists().withMessage('Deductible percentage is required')
                     .isNumeric().withMessage('Deductible percentage should be Number')
+                    .isLength({min: 0.00, max: 1.00})
             ];
         }
     }

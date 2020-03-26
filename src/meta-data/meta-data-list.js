@@ -5,7 +5,7 @@ export default function makeMetaDataList() {
     return Object.freeze({
         addDiscountCode,
         getAllDiscounts,
-        findByDiscountId,
+        findByDiscountCode,
         updateDiscount,
         removeDiscount
     });
@@ -30,16 +30,13 @@ export default function makeMetaDataList() {
         }
     }
 
-    async function findByDiscountId(id) {
+    async function findByDiscountCode(discountCode) {
         try {
-            const isValid = ObjectID.isValidObjectId(id);
-            if (isValid) {
-                return Discount.findOne({ _id: id }).then((data) => {
-                    return data;
-                }).catch((error) => {
-                    return error;
-                });
-            }
+            return Discount.findOne(discountCode).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }
