@@ -8,9 +8,5 @@ function shouldBypass(req) {
         '/api/v1/products'
     ];
 
-    if (bypassEndpoints.includes(req.baseUrl) && req.method == 'GET') {
-        return true;
-    }
-
-    return false;
+    return bypassEndpoints.includes(req.baseUrl) && req.method === 'GET';
 }
