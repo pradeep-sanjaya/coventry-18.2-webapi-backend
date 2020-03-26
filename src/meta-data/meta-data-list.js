@@ -50,13 +50,7 @@ export default function makeMetaDataList() {
             const isValid = ObjectID.isValidObjectId(id);
             if (isValid) {
                 return Discount.findOneAndUpdate(
-                    id,
-                    {
-                        $set: {
-                            discountCode: data.discountCode,
-                            deductiblePercentage: data.deductiblePercentage
-                        }
-                    }).then((data) => {
+                    id, data, { new: true }).then((data) => {
                     return data;
                 }).catch((error) => {
                     return error;

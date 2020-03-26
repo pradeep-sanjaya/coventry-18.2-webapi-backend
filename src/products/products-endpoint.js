@@ -3,7 +3,8 @@ import { encodeUrl } from '../helpers/utilities/url-parser';
 import { objectHandler } from '../helpers/utilities/normalize-request';
 
 export default function makeProductsEndpointHandler({
-    productList,categoryList
+    productList,
+    categoryList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -72,7 +73,7 @@ export default function makeProductsEndpointHandler({
         try {
             let categoryModel = await categoryList.findCategoryByName(category);
 
-            if(categoryModel.length) {
+            if (categoryModel.length) {
                 if (httpRequest.body) {
 
                     const productObj = {
@@ -98,7 +99,7 @@ export default function makeProductsEndpointHandler({
                         message: 'Request body does not contain a body'
                     });
                 }
-            }else{
+            } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
                     message: `Category ${category} not found`
@@ -140,21 +141,30 @@ export default function makeProductsEndpointHandler({
 
     async function updateProduct(httpRequest) {
         const { id } = httpRequest.pathParams || '';
-        const { body } = httpRequest;
-        const { category } = body;
+        const { name, category, qty, isAvailable, price, imageUrl } = httpRequest.body;
 
         try {
-
             let categoryModel = await categoryList.findCategoryByName(category);
 
-            if(categoryModel.length) {
-                let product = await productList.updateProduct({ id, body });
+            if (categoryModel.length) {
+                const timestamp = new Date().getTime();
+                const data = {
+                    timestamp,
+                    name,
+                    category,
+                    qty,
+                    isAvailable,
+                    price,
+                    imageUrl
+                };
+
+                let product = await productList.updateProduct({ id, data });
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
                     data: product,
                     message: `Product '${id}' updated successful.`
                 });
-            }else{
+            } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
                     message: `Category ${category} not found.`

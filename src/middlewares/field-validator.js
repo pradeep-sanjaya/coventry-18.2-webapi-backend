@@ -1,14 +1,21 @@
-import { body } from 'express-validator';
-import { validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
+import { errorResponse } from '../helpers/response/response-dispatcher';
+import HttpResponseType from '../models/http-response-type';
 
-function fieldStateChecker(req) {
+function fieldStateChecker(req, res, next) {
     const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-        const extractedErrors = [];
-        errors.array().map(error => extractedErrors.push(error.msg));
-        return extractedErrors;
+    if (errors.isEmpty()) {
+        return next();
     }
+
+    const extractedErrors = [];
+    errors.array().map(error => extractedErrors.push(error.msg));
+
+    return errorResponse(res, {
+        code: HttpResponseType.UNPROCESSABLE_ENTITY,
+        message: extractedErrors.join(', ')
+    });
 }
 
 const validate = (main, route, method) => {
@@ -127,8 +134,6 @@ function productsValidator(route) {
 }
 
 function cartValidator(route, method) {
-    console.log(route);
-    console.log(method);
     switch (route) {
     case '/':
         switch (method) {

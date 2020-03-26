@@ -2,7 +2,7 @@ import express from 'express';
 
 import categoryController from '../categories/category-controller';
 import filterRoute from '../middlewares/route-filter';
-import { validate } from '../middlewares/field-validator';
+import { fieldStateChecker, validate } from '../middlewares/field-validator';
 
 let categoryRouter = express.Router();
 
@@ -24,18 +24,21 @@ categoryRouter.get('/:id',
 categoryRouter.post('/',
     filterRoute,
     validate('categories', '/', 'post'),
+    fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
     });
 
 categoryRouter.put('/:id',
     filterRoute,
+    fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
     });
 
 categoryRouter.delete('/:id',
     filterRoute,
+    fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
     });

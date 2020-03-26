@@ -154,7 +154,9 @@ export default function makeCartEndPointHandler({
                     totalPrice += (price * selected[i].selectedQty);
                 }
 
+                const timestamp = new Date().getTime();
                 const data = {
+                    timestamp,
                     userId,
                     selected,
                     totalPrice: totalPrice.toFixed(2)

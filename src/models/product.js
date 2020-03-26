@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 const ProductSchema = mongoose.Schema;
 
 let productSchema = ProductSchema({
+    timestamp: {
+        type: Number,
+        default: new Date().getTime()
+    },
     name: {
         type: String,
         unique: true,

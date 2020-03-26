@@ -93,10 +93,13 @@ export default function makeMetaDataEndpointHandler({
         const { discountCode, deductiblePercentage } = httpRequest.body;
         if (id && discountCode && deductiblePercentage) {
             try {
-                const result = await metaDataList.updateDiscount(id, {
+                const timestamp = new Date().getTime();
+                const data = {
+                    timestamp,
                     discountCode,
                     deductiblePercentage
-                });
+                };
+                const result = await metaDataList.updateDiscount(id, data);
 
                 if (result) {
                     return objectHandler({

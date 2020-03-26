@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 const DiscountSchema = mongoose.Schema;
 
 let discountSchema = DiscountSchema({
+    timestamp: {
+        type: Number,
+        default: new Date().getTime()
+    },
     discountCode: {
         type: String,
         required: true,

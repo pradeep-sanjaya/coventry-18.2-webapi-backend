@@ -28,7 +28,6 @@ export default function makeOrderEndPointHandler({
             const { selected, totalPrice } = cart;
             if (httpRequest.body) {
                 try {
-
                     for (let i = 0; i < selected.length; i++) {
                         let object = {
                             id: selected[i].productId,
@@ -133,7 +132,8 @@ export default function makeOrderEndPointHandler({
     async function updateProductQuantities(data) {
         try {
             const { id, selectedQty } = data;
-            return await orderList.updateProductQuantities({ id, selectedQty });
+            const timestamp = new Date().getTime();
+            return await orderList.updateProductQuantities({ id, selectedQty, timestamp });
         } catch (error) {
             return error;
         }

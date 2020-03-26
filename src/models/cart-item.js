@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 const CartItemSchema = mongoose.Schema;
 
 let cartItemSchema = CartItemSchema({
+    timestamp: {
+        type: Number,
+        default: new Date().getTime()
+    },
     userId: {
         type: String,
         unique: true,

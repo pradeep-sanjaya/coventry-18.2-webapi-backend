@@ -2,13 +2,14 @@ import express from 'express';
 
 import orderController from '../order/order-controller';
 import authenticateJWT from '../middlewares/auth';
-import { validate } from '../middlewares/field-validator';
+import { fieldStateChecker, validate } from '../middlewares/field-validator';
 
 const orderRouter = express.Router();
 
 orderRouter.post('/',
     authenticateJWT,
     validate('orders', '/', 'post'),
+    fieldStateChecker,
     (req, res) => {
         orderController(req, res);
     });
