@@ -8,7 +8,7 @@ const cartRouter = express.Router();
 
 cartRouter.post('/products',
     authenticateJWT,
-    validate('cart', '/products', 'post'),
+    validate('cart', '/products', 'POST'),
     fieldStateChecker,
     (req, res) => {
         cartController(req, res);
@@ -16,7 +16,7 @@ cartRouter.post('/products',
 
 cartRouter.put('/products/:userId',
     authenticateJWT,
-    validate('cart', '/products', 'put'),
+    validate('cart', '/products', 'PUT'),
     fieldStateChecker,
     (req, res) => {
         cartController(req, res);

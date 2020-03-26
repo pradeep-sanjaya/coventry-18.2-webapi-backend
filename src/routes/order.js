@@ -8,7 +8,7 @@ const orderRouter = express.Router();
 
 orderRouter.post('/',
     authenticateJWT,
-    validate('orders', '/', 'post'),
+    validate('orders', '/', 'POST'),
     fieldStateChecker,
     (req, res) => {
         orderController(req, res);

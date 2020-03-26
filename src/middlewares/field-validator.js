@@ -27,11 +27,11 @@ const validate = (main, route, method) => {
     case 'products':
         return productsValidator(route);
     case 'cart':
-        return cartValidator(route);
+        return cartValidator(route, method);
     case 'orders':
         return orderValidator(route);
     case 'meta-data':
-        return metaDataValidator(method);
+        return metaDataValidator(route, method);
     default:
         return [];
     }
@@ -123,7 +123,9 @@ function productsValidator(route) {
             body('isAvailable')
                 .exists().withMessage('Is Available is required')
                 .isBoolean().withMessage('Name should be Boolean'),
-            body('price', 'Price is required').exists(),
+            body('price')
+                .exists().withMessage('Price is required')
+                .isNumeric().withMessage('Price should be Number'),
             body('imageUrl')
                 .exists().withMessage('Image url is required')
                 .isURL().withMessage('Image url is Invalid type of Url')
@@ -133,38 +135,38 @@ function productsValidator(route) {
     }
 }
 
+//todo: validators not triggers properly
 function cartValidator(route, method) {
-    switch (route) {
-    case '/':
+    if (route === '/products') {
         switch (method) {
         case 'POST':
             return [
                 body('userId')
                     .exists().withMessage('User Id is required')
                     .isMongoId().withMessage('User id is invalid mongo id'),
-                body('selected', 'Selected array is required').exists(),
-                body('selected.productId')
+                body('selected', 'Selected is required').exists()
+                    .isArray().withMessage('Selected should be Array'),
+                body('selected.*.productId')
                     .exists().withMessage('Product id is required')
                     .isMongoId().withMessage('Product id is invalid mongo id'),
-                body('selected.selectedQty')
+                body('selected.*.selectedQty')
                     .exists().withMessage('Selected qty is required')
                     .isNumeric().withMessage('Selected qty should be Number')
             ];
         case 'PUT':
             return [
-                body('selected', 'Selected array is required').exists(),
-                body('selected.productId')
+                body('selected', 'Selected is required').exists()
+                    .isArray().withMessage('Selected should be Array'),
+                body('selected.*.productId')
                     .exists().withMessage('Product id is required')
                     .isMongoId().withMessage('Product id is invalid mongo id'),
-                body('selected.selectedQty')
+                body('selected.*.selectedQty')
                     .exists().withMessage('Selected qty is required')
                     .isNumeric().withMessage('Selected qty should be Number')
             ];
         default:
             return [];
         }
-    default:
-        return [];
     }
 }
 
@@ -178,36 +180,47 @@ function orderValidator(route) {
                 .exists().withMessage('Payment Type is required')
                 .isString().withMessage('Payment type should be String'),
             body('deliveryAddress', 'Delivery address is required').exists(),
-            body('deliveryAddress.street', 'Delivery address is required').exists(),
+            body('deliveryAddress.street')
+                .exists().withMessage('Street is required')
+                .isString().withMessage('Street should be String'),
             body('deliveryAddress.district')
                 .exists().withMessage('District is required')
                 .isString().withMessage('District should be String'),
             body('deliveryAddress.zipCode')
                 .exists().withMessage('Zip code is required')
                 .isPostalCode('any').withMessage('Postal code should be type of Postal code'),
-            body('products', 'Products array is required').exists(),
-            body('products.productId')
+            body('products', 'Products is required').exists()
+                .isArray().withMessage('Products should be array'),
+            body('products.*.productId')
                 .exists().withMessage('Product id is required')
                 .isMongoId().withMessage('Product id is invalid mongo id'),
-            body('products.selectedQty')
+            body('products.*.selectedQty')
                 .exists().withMessage('Selected qty is required')
                 .isNumeric().withMessage('Selected qty should be Number')
         ];
     }
 }
 
-function metaDataValidator(method) {
-    switch (method) {
-    case 'POST':
-        return [
-            body('discountCode', 'Discount code is required').exists(),
-            body('deductiblePercentage', 'Deductible percentage is required').exists()
-        ];
-    case 'PUT':
-        return [
-            body('discountCode', 'Discount code is required').exists(),
-            body('deductiblePercentage', 'Deductible percentage is required').exists()
-        ];
+function metaDataValidator(route, method) {
+    if (route === '/discount-codes') {
+        switch (method) {
+        case 'POST':
+            return [
+                body('discountCode').exists().withMessage('Discount code is required')
+                    .isString().withMessage('Discount code should be String'),
+                body('deductiblePercentage')
+                    .exists().withMessage('Deductible percentage is required')
+                    .isNumeric().withMessage('Deductible percentage should be Number')
+            ];
+        case 'PUT':
+            return [
+                body('discountCode').exists().withMessage('Discount code is required')
+                    .isString().withMessage('Discount code should be String'),
+                body('deductiblePercentage')
+                    .exists().withMessage('Deductible percentage is required')
+                    .isNumeric().withMessage('Deductible percentage should be Number')
+            ];
+        }
     }
 }
 

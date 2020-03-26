@@ -17,7 +17,7 @@ productRouter.get('/:id', filterRoute, (req, res) => {
 /* POST users register. */
 productRouter.post('/',
     filterRoute,
-    validate('products', '/', 'post'),
+    validate('products', '/', 'POST'),
     fieldStateChecker,
     (req, res) => {
         productController(req, res);
@@ -26,7 +26,7 @@ productRouter.post('/',
 /* PUT users register. */
 productRouter.put('/:id',
     filterRoute,
-    validate('products', '/', 'post'),
+    validate('products', '/', 'POST'),
     fieldStateChecker,
     (req, res) => {
         productController(req, res);

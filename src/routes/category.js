@@ -23,7 +23,7 @@ categoryRouter.get('/:id',
 /* POST categories. */
 categoryRouter.post('/',
     filterRoute,
-    validate('categories', '/', 'post'),
+    validate('categories', '/', 'POST'),
     fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
@@ -31,6 +31,7 @@ categoryRouter.post('/',
 
 categoryRouter.put('/:id',
     filterRoute,
+    validate('categories', '/', 'PUT'),
     fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
