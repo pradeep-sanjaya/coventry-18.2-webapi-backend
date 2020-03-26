@@ -24,9 +24,8 @@ export default function makeCartList() {
         }
     }
 
-    async function updateTempProducts({ userId, selected, totalPrice, timestamp }) {
-        return CartItem.findOneAndUpdate(userId,
-            { $set: { selected, totalPrice, timestamp } }, { new: true });
+    async function updateTempProducts(id, data) {
+        return CartItem.findOneAndUpdate(id, data, { new: true });
     }
 
     async function removeTempProducts(userId) {

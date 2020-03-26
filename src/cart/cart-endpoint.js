@@ -134,6 +134,7 @@ export default function makeCartEndPointHandler({
             try {
                 const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
+                let selectedData = [];
 
                 if (!isValid) {
                     return objectHandler({
@@ -143,31 +144,44 @@ export default function makeCartEndPointHandler({
                 }
 
                 for (let i = 0; i < selected.length; i++) {
-                    let { price, qty } = await productList.findProductById(selected[i].productId);
+                    let product = await productList.findProductById(selected[i].productId);
 
-                    if (qty < selected[i].selectedQty) {
+                    if (product) {
+                        const data = Object.assign({}, product, { selectedQty: selected[i].selectedQty });
+                        selectedData.push(data);
+                    }
+
+                    if (product.qty < selected[i].selectedQty) {
                         return objectHandler({
                             code: HttpResponseType.CLIENT_ERROR,
                             message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
                         });
                     }
-                    totalPrice += (price * selected[i].selectedQty);
+                    totalPrice += (product.price * selected[i].selectedQty);
                 }
 
                 const timestamp = new Date().getTime();
                 const data = {
                     timestamp,
-                    userId,
                     selected,
                     totalPrice: totalPrice.toFixed(2)
                 };
 
-                const result = await cartList.updateTempProducts(data);
+                const result = await cartList.updateTempProducts(userId, data);
+                const respond = {
+                    _id: result._id,
+                    timestamp: result.timestamp,
+                    totalPrice: result.totalPrice,
+                    userId: result.userId,
+                    selected: selectedData,
+                    products: [],
+                    __v: 0
+                };
 
                 if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
-                        data: result,
+                        data: respond,
                         message: `Cart data updated successful for user id '${userId}'`
                     });
                 } else {
