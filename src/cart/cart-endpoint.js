@@ -91,7 +91,6 @@ export default function makeCartEndPointHandler({
                 if (cart && (selected && selected.length)) {
                     for (let i = 0; i < selected.length; i++) {
                         product = await productList.findProductById(selected[i].productId);
-                        console.log(product);
                         selectedQty = selected[i].selectedQty;
                         Object.assign(product, { selectedQty });
 

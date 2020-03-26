@@ -2,23 +2,42 @@ import express from 'express';
 
 import categoryController from '../categories/category-controller';
 import filterRoute from '../middlewares/route-filter';
+import { validate } from '../middlewares/field-validator';
 
 let categoryRouter = express.Router();
 
 /* GET categories. */
-categoryRouter.get('/', filterRoute, (req, res) => {
-    categoryController(req, res);
-});
+categoryRouter.get('/',
+    filterRoute,
+    (req, res) => {
+        categoryController(req, res);
+    });
 
 /* GET category by id. */
-categoryRouter.all('/:id', filterRoute, (req, res) => {
-    categoryController(req, res);
-});
+categoryRouter.get('/:id',
+    filterRoute,
+    (req, res) => {
+        categoryController(req, res);
+    });
 
 /* POST categories. */
-categoryRouter.post('/', filterRoute, (req, res) => {
-    categoryController(req, res);
-});
+categoryRouter.post('/',
+    filterRoute,
+    validate('categories', '/', 'post'),
+    (req, res) => {
+        categoryController(req, res);
+    });
 
+categoryRouter.put('/:id',
+    filterRoute,
+    (req, res) => {
+        categoryController(req, res);
+    });
+
+categoryRouter.delete('/:id',
+    filterRoute,
+    (req, res) => {
+        categoryController(req, res);
+    });
 
 module.exports = categoryRouter;

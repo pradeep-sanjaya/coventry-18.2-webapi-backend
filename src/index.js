@@ -11,7 +11,6 @@ import authenticateJWT from './middlewares/auth';
 import { errorResponse } from './helpers/response/response-dispatcher';
 
 import authRouter from './routes/auth';
-import mailRouter from './routes/mail';
 import productRouter from './routes/product';
 import apiDocsRouter from './routes/api-docs';
 import categoryRouter from './routes/category';
@@ -33,7 +32,6 @@ app.use('/api/v1/categories', authenticateJWT, categoryRouter);
 app.use('/api/v1/orders', authenticateJWT, orderRouter);
 app.use('/api/v1/meta', authenticateJWT, metaDataRouter);
 app.use('/api/v1/cart', authenticateJWT, cartRouter);
-app.use('/api/v1/mail', mailRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api-docs', apiDocsRouter);
 
