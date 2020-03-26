@@ -37,8 +37,8 @@ app.use('/api-docs', apiDocsRouter);
 
 app.all('*', (req, res) => {
     return errorResponse(res, {
-        code: HttpResponseType.NOT_FOUND, message:
-            'Request URL not found'
+        code: HttpResponseType.NOT_FOUND,
+        message: 'Request URL not found'
     });
 });
 
