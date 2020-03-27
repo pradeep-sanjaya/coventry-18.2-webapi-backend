@@ -118,7 +118,7 @@ export default function makeAuthEndPointHandler({
         } catch (error) {
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
-                message: error.code === 11000 ? `User ${firstName} is already exists`: error.message
+                message: error.code === 11000 ? `User ${firstName} is already exists` : error.message
             });
         }
     }
@@ -132,7 +132,7 @@ export default function makeAuthEndPointHandler({
             try {
                 const profile = await userList.findByEmail(user.email);
                 const token = Math.random().toString(36).substring(7);
-                const url = `${config.clientHost}/user/auth/reset-password/${token}`;
+                const url = `${config.clientHost}:${config.clientPort}/user/auth/reset-password/${token}`;
                 if (profile && profile.email) {
                     const email = {
                         to: profile.email,

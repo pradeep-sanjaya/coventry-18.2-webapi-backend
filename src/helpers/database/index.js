@@ -13,24 +13,18 @@ export default async function initializeDB() {
         useFindAndModify: false
     }).then(() => {
         logger().info(`Connected to  ${dbUrl}`);
-
-        console.log('Connected to %s', dbUrl);
-        console.log('Backend is up and running... \n');
     }).catch((error) => {
-        logger().info(`App starting error:  ${error.message}`);
-        console.error('App starting error:', error.message);
+        logger().info(`Database starting error:  ${error.message}`);
 
         process.exit(1);
     });
 
     let database = mongoose.connection;
 
-    database.once('open', () => console.log('Connected to the database'));
+    database.once('open', () => logger().info('Database connection is opened'));
 
-    // checks if connection with the database is successful
     database.on('error', () => {
-        logger().info('Connection error');
-        console.log('Mongo db connection error');
+        logger().info('Database connection error');
     });
 
     return database;

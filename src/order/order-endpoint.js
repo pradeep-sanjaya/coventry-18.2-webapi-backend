@@ -141,7 +141,7 @@ export default function makeOrderEndPointHandler({
 
     async function removeUserCart(userId) {
         try {
-            return await cartList.removeTempProducts(userId);
+            return await cartList.removeCart(userId);
         } catch (error) {
             return error;
         }

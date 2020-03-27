@@ -5,7 +5,6 @@ export default function makeCartList() {
         addTempProducts,
         getTempProducts,
         updateTempProducts,
-        removeTempProducts,
         removeCart
     });
 
@@ -27,14 +26,6 @@ export default function makeCartList() {
 
     async function updateTempProducts(id, data) {
         return CartItem.findOneAndUpdate({ userId: id }, data, { new: true });
-    }
-
-    async function removeTempProducts(userId) {
-        try {
-            return CartItem.deleteOne({ userId });
-        } catch (error) {
-            return error;
-        }
     }
 
     async function removeCart(id) {

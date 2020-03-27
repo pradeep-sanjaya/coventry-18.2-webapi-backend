@@ -1,13 +1,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import path from 'path';
+import chalk from 'chalk';
 
 import config from './config/config';
 
 import initializeDB from './helpers/database';
 
 import authenticateJWT from './middlewares/auth';
-import upload from './middlewares/uploadMiddleware';
+import uploadImg from './middlewares/upload-middleware';
 
 import { errorResponse } from './helpers/response/response-dispatcher';
 
@@ -21,11 +23,9 @@ import orderRouter from './routes/order';
 import imageRouter from './routes/image';
 
 import HttpResponseType from './models/http-response-type';
-import path from 'path';
 
 const app = express();
 
-//console.log(path.join(__dirname, 'public'));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
@@ -39,7 +39,7 @@ app.use('/api/v1/orders', authenticateJWT, orderRouter);
 app.use('/api/v1/meta', authenticateJWT, metaDataRouter);
 app.use('/api/v1/cart', authenticateJWT, cartRouter);
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/image', upload.single('image'), imageRouter);
+app.use('/api/v1/images', uploadImg.single('image'), imageRouter);
 
 app.use('/api-docs', apiDocsRouter);
 
@@ -50,4 +50,13 @@ app.all('*', (req, res) => {
     });
 });
 
-app.listen(config.apiPort, () => console.log(`Listening on port ${config.apiPort}`));
+app.listen(config.serverPort, () => {
+    console.log(chalk.magenta('-----------------------------------------------------------------------------'));
+    console.log(chalk.yellow('Server Environment Details'));
+    console.log(chalk.magenta('-----------------------------------------------------------------------------'));
+
+    console.log(chalk.green(`Backend URL: ${config.serverHost}:${config.serverPort}`));
+    console.log(chalk.green(`API Docs URL: ${config.serverHost}:${config.serverPort}/api-docs`));
+    console.log(chalk.magenta('-----------------------------------------------------------------------------'));
+    console.log(chalk.green.bold('Server is up and running...'));
+});
