@@ -20,76 +20,76 @@ function fieldStateChecker(req, res, next) {
 
 const validate = (main, route, method) => {
     switch (main) {
-    case 'auth':
-        return authValidator(route, method);
-    case 'categories':
-        return categoriesValidator(route);
-    case 'products':
-        return productsValidator(route);
-    case 'cart':
-        return cartValidator(route, method);
-    case 'orders':
-        return orderValidator(route);
-    case 'meta-data':
-        return metaDataValidator(route, method);
-    default:
-        return [];
+        case 'auth':
+            return authValidator(route, method);
+        case 'categories':
+            return categoriesValidator(route);
+        case 'products':
+            return productsValidator(route);
+        case 'cart':
+            return cartValidator(route, method);
+        case 'orders':
+            return orderValidator(route);
+        case 'meta-data':
+            return metaDataValidator(route, method);
+        default:
+            return [];
     }
 };
 
 function authValidator(route, method) {
     switch (route) {
-    case '/login':
-        return [
-            body('email')
-                .exists().withMessage('Email is not valid')
-                .isEmail().withMessage('Email is in invalid format'),
-            body('password')
-                .exists().withMessage('Password is required')
-                .isLength({ min: 8 }).withMessage('Password should be 8 characters long')
-                .matches(/\d/).withMessage('Password must contain a number')
-        ];
-    case '/register':
-        return [
-            body('gender')
-                .exists().withMessage('Gender is required')
-                .isString().withMessage('Gender should be String'),
-            body('firstName')
-                .exists().withMessage('First name is required')
-                .isString().withMessage('First name should be String'),
-            body('lastName')
-                .exists().withMessage('Last name is required')
-                .isString().withMessage('Last name should be String'),
-            body('email')
-                .exists().withMessage('Email is not valid')
-                .isEmail().withMessage('Email is in invalid format'),
-            body('password')
-                .exists().withMessage('Password is required')
-                .isLength({ min: 8 }).withMessage('Password should be 8 characters long')
-                .matches(/\d/).withMessage('Password must contain a number'),
-            body('role').exists().withMessage('Role is required')
-                .isString().withMessage('Role should be String')
-        ];
-    case '/reset-password':
-        switch (method) {
-        case 'POST':
+        case '/login':
             return [
                 body('email')
                     .exists().withMessage('Email is not valid')
-                    .isEmail().withMessage('Email is in invalid format')
-            ];
-        case 'PUT':
-            return [
+                    .isEmail().withMessage('Email is in invalid format'),
                 body('password')
                     .exists().withMessage('Password is required')
                     .isLength({ min: 8 }).withMessage('Password should be 8 characters long')
                     .matches(/\d/).withMessage('Password must contain a number')
             ];
+        case '/register':
+            return [
+                body('gender')
+                    .exists().withMessage('Gender is required')
+                    .isString().withMessage('Gender should be String'),
+                body('firstName')
+                    .exists().withMessage('First name is required')
+                    .isString().withMessage('First name should be String'),
+                body('lastName')
+                    .exists().withMessage('Last name is required')
+                    .isString().withMessage('Last name should be String'),
+                body('email')
+                    .exists().withMessage('Email is not valid')
+                    .isEmail().withMessage('Email is in invalid format'),
+                body('password')
+                    .exists().withMessage('Password is required')
+                    .isLength({ min: 8 }).withMessage('Password should be 8 characters long')
+                    .matches(/\d/).withMessage('Password must contain a number'),
+                body('role').exists().withMessage('Role is required')
+                    .isString().withMessage('Role should be String')
+            ];
+        case '/reset-password':
+            switch (method) {
+                case 'POST':
+                    return [
+                        body('email')
+                            .exists().withMessage('Email is not valid')
+                            .isEmail().withMessage('Email is in invalid format')
+                    ];
+                case 'PUT':
+                    return [
+                        body('password')
+                            .exists().withMessage('Password is required')
+                            .isLength({ min: 8 }).withMessage('Password should be 8 characters long')
+                            .matches(/\d/).withMessage('Password must contain a number')
+                    ];
+                default:
+                    return [];
+            }
         default:
             return [];
-        }
-    default:
-        return [];
     }
 }
 
@@ -101,7 +101,7 @@ function categoriesValidator(route) {
                 .isString().withMessage('Name should be String'),
             body('imageUrl')
                 .exists().withMessage('Image url is required')
-                .isURL().withMessage('Image url is invalid type of Url')
+            //.isURL().withMessage('Image url is invalid type of Url')
         ];
     } else {
         return [];
@@ -139,33 +139,33 @@ function productsValidator(route) {
 function cartValidator(route, method) {
     if (route === '/products') {
         switch (method) {
-        case 'POST':
-            return [
-                body('userId')
-                    .exists().withMessage('User Id is required')
-                    .isMongoId().withMessage('User id is invalid mongo id'),
-                body('selected', 'Selected is required').exists()
-                    .isArray().withMessage('Selected should be Array'),
-                body('selected.*.productId')
-                    .exists().withMessage('Product id is required')
-                    .isMongoId().withMessage('Product id is invalid mongo id'),
-                body('selected.*.selectedQty')
-                    .exists().withMessage('Selected qty is required')
-                    .isNumeric().withMessage('Selected qty should be Number')
-            ];
-        case 'PUT':
-            return [
-                body('selected', 'Selected is required').exists()
-                    .isArray().withMessage('Selected should be Array'),
-                body('selected.*.productId')
-                    .exists().withMessage('Product id is required')
-                    .isMongoId().withMessage('Product id is invalid mongo id'),
-                body('selected.*.selectedQty')
-                    .exists().withMessage('Selected qty is required')
-                    .isNumeric().withMessage('Selected qty should be Number')
-            ];
-        default:
-            return [];
+            case 'POST':
+                return [
+                    body('userId')
+                        .exists().withMessage('User Id is required')
+                        .isMongoId().withMessage('User id is invalid mongo id'),
+                    body('selected', 'Selected is required').exists()
+                        .isArray().withMessage('Selected should be Array'),
+                    body('selected.*.productId')
+                        .exists().withMessage('Product id is required')
+                        .isMongoId().withMessage('Product id is invalid mongo id'),
+                    body('selected.*.selectedQty')
+                        .exists().withMessage('Selected qty is required')
+                        .isNumeric().withMessage('Selected qty should be Number')
+                ];
+            case 'PUT':
+                return [
+                    body('selected', 'Selected is required').exists()
+                        .isArray().withMessage('Selected should be Array'),
+                    body('selected.*.productId')
+                        .exists().withMessage('Product id is required')
+                        .isMongoId().withMessage('Product id is invalid mongo id'),
+                    body('selected.*.selectedQty')
+                        .exists().withMessage('Selected qty is required')
+                        .isNumeric().withMessage('Selected qty should be Number')
+                ];
+            default:
+                return [];
         }
     }
 }
@@ -204,22 +204,24 @@ function orderValidator(route) {
 function metaDataValidator(route, method) {
     if (route === '/discount-codes') {
         switch (method) {
-        case 'POST':
-            return [
-                body('discountCode').exists().withMessage('Discount code is required')
-                    .isString().withMessage('Discount code should be String'),
-                body('deductiblePercentage')
-                    .exists().withMessage('Deductible percentage is required')
-                    .isNumeric().withMessage('Deductible percentage should be Number')
-            ];
-        case 'PUT':
-            return [
-                body('discountCode').exists().withMessage('Discount code is required')
-                    .isString().withMessage('Discount code should be String'),
-                body('deductiblePercentage')
-                    .exists().withMessage('Deductible percentage is required')
-                    .isNumeric().withMessage('Deductible percentage should be Number')
-            ];
+            case 'POST':
+                return [
+                    body('discountCode').exists().withMessage('Discount code is required')
+                        .isString().withMessage('Discount code should be String'),
+                    body('deductiblePercentage')
+                        .exists().withMessage('Deductible percentage is required')
+                        .isNumeric().withMessage('Deductible percentage should be Number')
+                        .isLength({ min: 0.00, max: 1.00 }).withMessage('Deductible percentage should be between 0.00 and 1.00')
+                ];
+            case 'PUT':
+                return [
+                    body('discountCode').exists().withMessage('Discount code is required')
+                        .isString().withMessage('Discount code should be String'),
+                    body('deductiblePercentage')
+                        .exists().withMessage('Deductible percentage is required')
+                        .isNumeric().withMessage('Deductible percentage should be Number')
+                        .isLength({ min: 0.00, max: 1.00 })
+                ];
         }
     }
 }

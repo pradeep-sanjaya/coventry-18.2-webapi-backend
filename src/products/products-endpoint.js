@@ -8,22 +8,24 @@ export default function makeProductsEndpointHandler({
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-        case 'POST':
-            return addProduct(httpRequest);
-        case 'GET':
-            if (httpRequest.queryParams && httpRequest.queryParams.category) {
-                return getProductByCategory(httpRequest);
-            }
-            return getProducts(httpRequest);
-        case 'DELETE':
-            return deleteProduct(httpRequest);
-        case 'PUT':
-            return updateProduct(httpRequest);
-        default:
-            return objectHandler({
-                code: HttpResponseType.METHOD_NOT_ALLOWED,
-                message: `${httpRequest.method} method not allowed`
-            });
+            case 'POST':
+                return addProduct(httpRequest);
+            case 'GET':
+                if (httpRequest.queryParams && httpRequest.queryParams.category) {
+                    return getProductByCategory(httpRequest);
+                } else if (httpRequest.queryParams && httpRequest.queryParams.productId) {
+                    return getProductByProductId(httpRequest);
+                }
+                return getProducts(httpRequest);
+            case 'DELETE':
+                return deleteProduct(httpRequest);
+            case 'PUT':
+                return updateProduct(httpRequest);
+            default:
+                return objectHandler({
+                    code: HttpResponseType.METHOD_NOT_ALLOWED,
+                    message: `${httpRequest.method} method not allowed`
+                });
         }
     };
 
@@ -186,6 +188,23 @@ export default function makeProductsEndpointHandler({
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: products,
+                message: ''
+            });
+        } catch (error) {
+            return objectHandler({
+                code: HttpResponseType.INTERNAL_SERVER_ERROR,
+                message: error.message
+            });
+        }
+    }
+
+    async function getProductByProductId(httpRequest) {
+        const { productId } = httpRequest.queryParams;
+        try {
+            let product = await productList.findProductById(productId);
+            return objectHandler({
+                status: HttpResponseType.SUCCESS,
+                data: product,
                 message: ''
             });
         } catch (error) {

@@ -18,7 +18,7 @@ metaDataRouter.get('/discount-codes', filterRoute, (req, res) => {
     metaDataController(req, res);
 });
 
-metaDataRouter.get('/discount-codes/:id', filterRoute, (req, res) => {
+metaDataRouter.get('/discount-codes/:discountCode', filterRoute, (req, res) => {
     metaDataController(req, res);
 });
 
