@@ -5,7 +5,8 @@ import makeContactsEndpointHandler from './products-endpoint';
 const productList = makeProductList();
 const categoryList = makeCategoryList();
 const productsEndpointHandler = makeContactsEndpointHandler({
-    productList,categoryList
+    productList,
+    categoryList
 });
 
 export default productsEndpointHandler;
