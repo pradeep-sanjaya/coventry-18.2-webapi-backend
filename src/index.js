@@ -18,10 +18,7 @@ import categoryRouter from './routes/category';
 import metaDataRouter from './routes/meta-data';
 import cartRouter from './routes/cart';
 import orderRouter from './routes/order';
-
 import imageRouter from './routes/image';
-import cartRouter from './routes/cart';
-import orderRouter from './routes/order';
 
 import HttpResponseType from './models/http-response-type';
 import path from 'path';
