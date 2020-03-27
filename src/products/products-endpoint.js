@@ -47,7 +47,7 @@ export default function makeProductsEndpointHandler({
         } else {
             try {
                 result = await productList.findProductById(pathParams.id);
-                if (result && result.length) {
+                if (result && result._id) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: result,
