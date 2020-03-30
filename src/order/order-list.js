@@ -38,7 +38,7 @@ export default function makeCartList() {
         }
     }
 
-    async function updateProductQuantities({ id, selectedQty, timestamp }) {
+    async function updateProductQuantities({ id, selectedQty }) {
         try {
             let product = null;
             let qty = 0;
@@ -46,20 +46,21 @@ export default function makeCartList() {
             await Product.findOne({ _id: id }, (err, productObj) => {
                 product = productObj;
             });
+
             if (product) {
                 qty = product.qty - selectedQty;
             }
 
             if (qty === 0) {
                 return Product.findOneAndUpdate({ _id: id },
-                    { timestamp, qty, isAvailable: false },
-                    { new: true });
+                    { qty, isAvailable: false },
+                    { new: true }).lean(true);
             }
 
             if (qty > 0) {
                 return Product.findOneAndUpdate({ _id: id },
-                    { timestamp, qty },
-                    { new: true });
+                    { qty },
+                    { new: true }).lean(true);
             }
         } catch (error) {
             return error;

@@ -4,7 +4,8 @@ import HttpResponseType from '../models/http-response-type';
 export default function makeCartEndPointHandler({
     cartList,
     userList,
-    productList
+    productList,
+    metaDataList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
@@ -15,6 +16,9 @@ export default function makeCartEndPointHandler({
         case 'PUT':
             return updateCartProducts(httpRequest);
         case 'DELETE':
+            if (httpRequest.queryParams && httpRequest.queryParams.productId) {
+                return deleteCartProduct(httpRequest);
+            }
             return deleteCart(httpRequest);
         default:
             return objectHandler({
@@ -40,24 +44,32 @@ export default function makeCartEndPointHandler({
                 }
 
                 for (let i = 0; i < selected.length; i++) {
-                    let { price, qty } = await productList.findProductById(selected[i].productId);
+                    let product = await productList.findProductById(selected[i].productId);
+                    if (!product) {
+                        return objectHandler({
+                            code: HttpResponseType.NOT_FOUND,
+                            message: `Selected product id '${selected[i].productId}' does not found`
+                        });
+                    }
 
-                    if (qty < selected[i].selectedQty) {
+                    if (product.qty < selected[i].selectedQty) {
                         return objectHandler({
                             code: HttpResponseType.CLIENT_ERROR,
                             message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
                         });
                     }
-                    totalPrice += (price * selected[i].selectedQty);
+
+                    Object.assign(selected[i], product);
+                    totalPrice += (product.price * selected[i].selectedQty);
                 }
 
                 const data = {
                     userId: userId,
                     selected: selected,
-                    totalPrice: totalPrice.toFixed(2),
-                    products: []
+                    netTotalPrice: totalPrice.toFixed(2)
                 };
                 const result = await cartList.addTempProducts(data);
+
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
                     data: result,
@@ -82,43 +94,19 @@ export default function makeCartEndPointHandler({
 
         if (userId) {
             try {
-                let product = {};
-                let products = [];
-                let selectedQty = 0;
-
                 const cart = await cartList.getTempProducts({ userId });
-
-                const { selected, totalPrice } = cart || null;
-
-                if (cart && (selected && selected.length)) {
-                    for (let i = 0; i < selected.length; i++) {
-                        product = await productList.findProductById(selected[i].productId);
-                        selectedQty = selected[i].selectedQty;
-                        Object.assign(product, { selectedQty });
-
-                        if (product) {
-                            products.push(product);
-                        }
-                    }
+                if (cart && (cart.selected && cart.selected.length)) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: cart,
+                        message: ''
+                    });
                 } else {
                     return objectHandler({
                         code: HttpResponseType.NOT_FOUND,
                         message: `Cart data not available for user id '${userId}'`
                     });
                 }
-
-                const cartItems = {
-                    userId,
-                    selected: [],
-                    products,
-                    totalPrice
-                };
-
-                return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: cartItems,
-                    message: ''
-                });
             } catch (error) {
                 return objectHandler({
                     code: HttpResponseType.INTERNAL_SERVER_ERROR,
@@ -132,11 +120,10 @@ export default function makeCartEndPointHandler({
         const { userId } = httpRequest.pathParams;
         const { selected } = httpRequest.body;
 
-        if (selected && userId) {
+        if (userId && selected) {
             try {
                 const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
-                let selectedData = [];
 
                 if (!isValid) {
                     return objectHandler({
@@ -148,9 +135,11 @@ export default function makeCartEndPointHandler({
                 for (let i = 0; i < selected.length; i++) {
                     let product = await productList.findProductById(selected[i].productId);
 
-                    if (product) {
-                        const data = Object.assign({}, product, { selectedQty: selected[i].selectedQty });
-                        selectedData.push(data);
+                    if (!product) {
+                        return objectHandler({
+                            code: HttpResponseType.NOT_FOUND,
+                            message: `Selected product id '${selected[i].productId}' does not found`
+                        });
                     }
 
                     if (product.qty < selected[i].selectedQty) {
@@ -159,32 +148,21 @@ export default function makeCartEndPointHandler({
                             message: `Selected quantity is greater than available quantity for product id '${selected[i].productId}'`
                         });
                     }
+
+                    Object.assign(selected[i], product);
                     totalPrice += (product.price * selected[i].selectedQty);
                 }
 
-                const timestamp = new Date().getTime();
                 const data = {
-                    timestamp,
                     selected,
-                    totalPrice: totalPrice.toFixed(2)
+                    netTotalPrice: totalPrice.toFixed(2)
                 };
 
                 const result = await cartList.updateTempProducts(userId, data);
-
                 if (result) {
-                    const respond = {
-                        _id: result._id,
-                        timestamp: result.timestamp,
-                        totalPrice: result.totalPrice,
-                        userId: result.userId,
-                        selected: selectedData,
-                        products: [],
-                        __v: result.__v
-                    };
-
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
-                        data: respond,
+                        data: result,
                         message: `Cart data updated successful for user id '${userId}'`
                     });
                 } else {
@@ -203,6 +181,68 @@ export default function makeCartEndPointHandler({
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
                 message: 'Request path params or body is missing or invalid'
+            });
+        }
+    }
+
+    async function deleteCartProduct(httpRequest) {
+        const { userId } = httpRequest.pathParams;
+        const { productId } = httpRequest.queryParams;
+
+        try {
+            const products = await cartList.removeCartProduct(userId, productId);
+
+            if (products && products.selected.length) {
+                let total = 0;
+
+                products.selected.map((product) => {
+                    total = total + (product.selectedQty * product.price);
+                });
+
+                const { discountCode } = await cartList.getTempProducts({ userId });
+
+                if (discountCode) {
+                    const { deductiblePercentage } = await metaDataList.findByDiscountCode(discountCode);
+
+                    if (deductiblePercentage) {
+                        const discountTotal = total * (deductiblePercentage / 100);
+                        products.discountsDeducted = discountTotal;
+                        products.netTotalPrice = total - discountTotal;
+                    } else {
+                        return objectHandler({
+                            code: HttpResponseType.NOT_FOUND,
+                            message: `Applied discount code '${discountCode}' is missing or invalid`
+                        });
+                    }
+                } else {
+                    products.netTotalPrice = total;
+                }
+                products.grossTotalPrice = total;
+
+                const updatedProducts = await cartList.updateTempProducts(userId, products);
+
+                if (updatedProducts && updatedProducts.selected) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: updatedProducts,
+                        message: `Cart product '${productId}' deleted successful`
+                    });
+                } else {
+                    return objectHandler({
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Something went wrong while updating the product id '${productId}'`
+                    });
+                }
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Products are empty in user id '${userId}' cart`
+                });
+            }
+        } catch (error) {
+            return objectHandler({
+                code: HttpResponseType.NOT_FOUND,
+                message: error.message
             });
         }
     }

@@ -8,24 +8,24 @@ export default function makeProductsEndpointHandler({
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-            case 'POST':
-                return addProduct(httpRequest);
-            case 'GET':
-                if (httpRequest.queryParams && httpRequest.queryParams.category) {
-                    return getProductByCategory(httpRequest);
-                } else if (httpRequest.queryParams && httpRequest.queryParams.productId) {
-                    return getProductByProductId(httpRequest);
-                }
-                return getProducts(httpRequest);
-            case 'DELETE':
-                return deleteProduct(httpRequest);
-            case 'PUT':
-                return updateProduct(httpRequest);
-            default:
-                return objectHandler({
-                    code: HttpResponseType.METHOD_NOT_ALLOWED,
-                    message: `${httpRequest.method} method not allowed`
-                });
+        case 'POST':
+            return addProduct(httpRequest);
+        case 'GET':
+            if (httpRequest.queryParams && httpRequest.queryParams.category) {
+                return getProductByCategory(httpRequest);
+            } else if (httpRequest.queryParams && httpRequest.queryParams.productId) {
+                return getProductByProductId(httpRequest);
+            }
+            return getProducts(httpRequest);
+        case 'DELETE':
+            return deleteProduct(httpRequest);
+        case 'PUT':
+            return updateProduct(httpRequest);
+        default:
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
+            });
         }
     };
 
@@ -104,7 +104,7 @@ export default function makeProductsEndpointHandler({
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Category ${category} not found`
+                    message: `Category '${category}' not found in categories`
                 });
             }
         } catch (error) {
@@ -149,15 +149,13 @@ export default function makeProductsEndpointHandler({
             let categoryModel = await categoryList.findCategoryByName(category);
 
             if (categoryModel.length) {
-                const timestamp = new Date().getTime();
                 const data = {
-                    timestamp,
                     name,
                     category,
                     qty,
                     isAvailable,
                     price,
-                    imageUrl
+                    imageUrl: encodeUrl(imageUrl)
                 };
 
                 let product = await productList.updateProduct({ id, data });
@@ -184,7 +182,7 @@ export default function makeProductsEndpointHandler({
     async function getProductByCategory(httpRequest) {
         const { category } = httpRequest.queryParams;
         try {
-            let products = await productList.getProductByCategory(category);
+            let products = await productList.getProductsByCategory(category);
             return objectHandler({
                 status: HttpResponseType.SUCCESS,
                 data: products,

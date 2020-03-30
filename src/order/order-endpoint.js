@@ -25,7 +25,7 @@ export default function makeOrderEndPointHandler({
         let cart = await cartList.getTempProducts({ userId });
 
         if (cart) {
-            const { selected, totalPrice } = cart;
+            const { selected, netTotalPrice } = cart;
             if (httpRequest.body) {
                 try {
                     for (let i = 0; i < selected.length; i++) {
@@ -33,7 +33,12 @@ export default function makeOrderEndPointHandler({
                             id: selected[i].productId,
                             selectedQty: selected[i].selectedQty
                         };
-                        await updateProductQuantities(object);
+
+                        const updatedProducts = await updateProductQuantities(object);
+
+                        if (updatedProducts) {
+                            Object.assign(selected[i], updatedProducts);
+                        }
                     }
 
                     const userStatus = await removeUserCart(userId);
@@ -46,16 +51,19 @@ export default function makeOrderEndPointHandler({
                         userId,
                         paymentType,
                         deliveryAddress,
-                        totalPrice,
-                        products: selected
+                        netTotalPrice,
+                        selected
                     };
 
                     const result = await orderList.addOrderProducts(order);
-                    return objectHandler({
-                        status: HttpResponseType.SUCCESS,
-                        data: result,
-                        message: 'Order created successful'
-                    });
+
+                    if (result) {
+                        return objectHandler({
+                            status: HttpResponseType.SUCCESS,
+                            data: result,
+                            message: 'Order created successful'
+                        });
+                    }
                 } catch (error) {
                     return objectHandler({
                         code: HttpResponseType.INTERNAL_SERVER_ERROR,
@@ -71,7 +79,7 @@ export default function makeOrderEndPointHandler({
         } else {
             return objectHandler({
                 code: HttpResponseType.NOT_FOUND,
-                message: 'Something went wrong cart not found.'
+                message: `Cart not found for user id'${userId}'`
             });
         }
     }
@@ -132,8 +140,7 @@ export default function makeOrderEndPointHandler({
     async function updateProductQuantities(data) {
         try {
             const { id, selectedQty } = data;
-            const timestamp = new Date().getTime();
-            return await orderList.updateProductQuantities({ id, selectedQty, timestamp });
+            return await orderList.updateProductQuantities({ id, selectedQty });
         } catch (error) {
             return error;
         }

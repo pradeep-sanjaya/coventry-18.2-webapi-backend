@@ -20,20 +20,6 @@ let cartItemSchema = CartItemSchema({
                 required: true,
                 unique: true
             },
-            selectedQty: {
-                type: Number,
-                required: true
-            }
-        }
-    ],
-    products: [
-        {
-            _id: false,
-            productId: {
-                type: String,
-                required: true,
-                unique: true
-            },
             name: {
                 type: String,
                 required: true
@@ -61,13 +47,24 @@ let cartItemSchema = CartItemSchema({
             imageUrl: {
                 type: String,
                 required: true
-            },
-            default: []
+            }
         }
     ],
-    totalPrice: {
-        type: Number,
+    discountCode: {
+        type: String,
         default: null
+    },
+    discountsDeducted: {
+        type: Number,
+        default: 0
+    },
+    grossTotalPrice: {
+        type: Number,
+        default: 0
+    },
+    netTotalPrice: {
+        type: Number,
+        default: 0
     }
 });
 

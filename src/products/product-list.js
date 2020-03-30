@@ -4,7 +4,7 @@ export default function makeProductList() {
     return Object.freeze({
         addProduct,
         getAllProducts,
-        getProductByCategory,
+        getProductsByCategory,
         findProductById,
         removeProduct,
         updateProduct
@@ -30,7 +30,7 @@ export default function makeProductList() {
         }
     }
 
-    async function getProductByCategory(category) {
+    async function getProductsByCategory(category) {
         try {
             return Product.find({
                 category: category

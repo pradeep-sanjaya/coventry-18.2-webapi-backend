@@ -9,7 +9,6 @@ let discountSchema = DiscountSchema({
     },
     discountCode: {
         type: String,
-        required: true,
         unique: true
     },
     deductiblePercentage: {

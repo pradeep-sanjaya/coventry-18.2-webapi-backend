@@ -14,6 +14,14 @@ metaDataRouter.post('/discount-codes',
         metaDataController(req, res);
     });
 
+metaDataRouter.post('/discount-codes/validate',
+    filterRoute,
+    validate('meta-data', '/discount-codes/validate', 'POST'),
+    fieldStateChecker,
+    (req, res) => {
+        metaDataController(req, res);
+    });
+
 metaDataRouter.get('/discount-codes', filterRoute, (req, res) => {
     metaDataController(req, res);
 });
@@ -22,7 +30,7 @@ metaDataRouter.get('/discount-codes/:discountCode', filterRoute, (req, res) => {
     metaDataController(req, res);
 });
 
-metaDataRouter.put('/discount-codes/:id',
+metaDataRouter.put('/discount-codes/:discountCode',
     filterRoute,
     validate('meta-data', '/discount-codes', 'PUT'),
     fieldStateChecker,
@@ -30,7 +38,7 @@ metaDataRouter.put('/discount-codes/:id',
         metaDataController(req, res);
     });
 
-metaDataRouter.delete('/discount-codes/:id',
+metaDataRouter.delete('/discount-codes/:discountCode',
     filterRoute,
     (req, res) => {
         metaDataController(req, res);

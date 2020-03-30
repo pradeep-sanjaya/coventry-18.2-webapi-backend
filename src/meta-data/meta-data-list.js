@@ -1,5 +1,4 @@
 import Discount from '../models/discount';
-import ObjectID from 'mongoose';
 
 export default function makeMetaDataList() {
     return Object.freeze({
@@ -42,32 +41,26 @@ export default function makeMetaDataList() {
         }
     }
 
-    async function updateDiscount(id, data) {
+    async function updateDiscount(discountCode, data) {
         try {
-            const isValid = ObjectID.isValidObjectId(id);
-            if (isValid) {
-                return Discount.findOneAndUpdate(
-                    id, data, { new: true }).then((data) => {
-                    return data;
-                }).catch((error) => {
-                    return error;
-                });
-            }
+            return Discount.findOneAndUpdate(
+                { discountCode }, data, { new: true }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }
     }
 
-    async function removeDiscount(id) {
+    async function removeDiscount(discountCode) {
         try {
-            const isValid = ObjectID.isValidObjectId(id);
-            if (isValid) {
-                return Discount.deleteOne({ _id: id }).then((data) => {
-                    return data;
-                }).catch((error) => {
-                    return error;
-                });
-            }
+            return Discount.deleteOne({ discountCode }).then((data) => {
+                return data;
+            }).catch((error) => {
+                return error;
+            });
         } catch (error) {
             return error;
         }

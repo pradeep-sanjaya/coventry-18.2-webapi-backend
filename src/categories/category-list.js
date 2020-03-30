@@ -44,7 +44,7 @@ export default function makeCategoryList() {
 
     async function findCategoryById(id) {
         try {
-            return Category.find({
+            return Category.findOne({
                 _id: id
             }).then((category) => {
                 return category;

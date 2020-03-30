@@ -28,7 +28,7 @@ cartRouter.get('/products/:userId',
         cartController(req, res);
     });
 
-cartRouter.delete('/products/:userId',
+cartRouter.delete('/:userId',
     authenticateJWT,
     (req, res) => {
         cartController(req, res);

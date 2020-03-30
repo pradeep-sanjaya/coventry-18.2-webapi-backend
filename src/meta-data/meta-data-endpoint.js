@@ -1,14 +1,18 @@
-import { objectHandler } from '../helpers/utilities/normalize-request';
+import {objectHandler} from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
 
 export default function makeMetaDataEndpointHandler({
-    metaDataList
+    metaDataList,
+    cartList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
         case 'GET':
             return getDiscounts(httpRequest);
         case 'POST':
+            if (httpRequest.path === '/discount-codes/validate') {
+                return validateDiscount(httpRequest);
+            }
             return addDiscount(httpRequest);
         case 'PUT':
             return updateDiscount(httpRequest);
@@ -48,11 +52,13 @@ export default function makeMetaDataEndpointHandler({
         } else {
             try {
                 const result = await metaDataList.getAllDiscounts();
-                return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: result,
-                    message: ''
-                });
+                if (result && result.length) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                }
             } catch (error) {
                 return objectHandler({
                     code: HttpResponseType.INTERNAL_SERVER_ERROR,
@@ -89,28 +95,26 @@ export default function makeMetaDataEndpointHandler({
     }
 
     async function updateDiscount(httpRequest) {
-        const { id } = httpRequest.pathParams;
-        const { discountCode, deductiblePercentage } = httpRequest.body;
-        if (id && discountCode && deductiblePercentage) {
+        const { discountCode } = httpRequest.pathParams;
+        const { deductiblePercentage } = httpRequest.body;
+
+        if (discountCode && deductiblePercentage) {
             try {
-                const timestamp = new Date().getTime();
                 const data = {
-                    timestamp,
-                    discountCode,
                     deductiblePercentage
                 };
-                const result = await metaDataList.updateDiscount(id, data);
 
+                const result = await metaDataList.updateDiscount(discountCode, data);
                 if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: result,
-                        message: `Discount '${id}' updated successful`
+                        message: `Discount '${discountCode}' updated successful`
                     });
                 } else {
                     return objectHandler({
-                        code: HttpResponseType.CLIENT_ERROR,
-                        message: 'Required fields are missing or invalid'
+                        code: HttpResponseType.NOT_FOUND,
+                        message: `Discount id '${discountCode}' is not found`
                     });
                 }
             } catch (error) {
@@ -128,26 +132,65 @@ export default function makeMetaDataEndpointHandler({
     }
 
     async function removeDiscount(httpRequest) {
-        const { id } = httpRequest.pathParams;
+        const { discountCode } = httpRequest.pathParams;
 
-        if (id) {
-            let result = await metaDataList.removeDiscount(id);
+        if (discountCode) {
+            let result = await metaDataList.removeDiscount(discountCode);
             if (result && result.deletedCount) {
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
                     data: result,
-                    message: `Discount '${id}' record is deleted successful`
+                    message: `Discount '${discountCode}' record is deleted successful`
                 });
             } else {
                 return objectHandler({
                     code: HttpResponseType.NOT_FOUND,
-                    message: `Requested discount '${id}' not found in discount codes`
+                    message: `Requested discount '${discountCode}' not found in discount codes`
                 });
             }
         } else {
             return objectHandler({
                 code: HttpResponseType.CLIENT_ERROR,
                 message: 'Required path parameter missing or invalid'
+            });
+        }
+    }
+
+    async function validateDiscount(httpRequest) {
+        const { userId, discountCode } = httpRequest.body;
+        const discount = await metaDataList.findByDiscountCode({ discountCode });
+
+        if (discount) {
+            const cart = await cartList.getTempProducts({ userId });
+            if (cart) {
+                const discountTotal = cart.netTotalPrice * (discount.deductiblePercentage/100);
+                const total = cart.netTotalPrice;
+
+                cart.discountCode = discountCode;
+                cart.discountsDeducted = discountTotal;
+
+                cart.grossTotalPrice = total;
+                cart.netTotalPrice = total - discountTotal;
+
+                const priceUpdatedCart = await cartList.updateTempProducts(userId, cart);
+
+                if (priceUpdatedCart) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: priceUpdatedCart,
+                        message: `Discount id '${discountCode}' is applied to the cart id '${cart._id}'`
+                    });
+                }
+            } else {
+                return objectHandler({
+                    code: HttpResponseType.NOT_FOUND,
+                    message: `Cart not found for user id '${userId}'`
+                });
+            }
+        } else {
+            return objectHandler({
+                code: HttpResponseType.NOT_FOUND,
+                message: `Discount not found for discount code '${discountCode}'`
             });
         }
     }

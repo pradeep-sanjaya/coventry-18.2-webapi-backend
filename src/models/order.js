@@ -32,37 +32,43 @@ let orderSchema = OrderSchema({
             minlength: 5
         }
     },
-    totalPrice:{
-        type:Number,
-        required:true
+    netTotalPrice: {
+        type: Number,
+        required: true
     },
-    // prices: {
-    //     discountCode: {
-    //         type: String,
-    //         required: true
-    //     },
-    //     discountsDeducted: {
-    //         type: Number,
-    //         required: true
-    //     },
-    //     grossTotalPrice: {
-    //         type: Number,
-    //         required: true
-    //     },
-    //     netTotalPrice: {
-    //         type: Number,
-    //         required: true
-    //     }
-    // },
-    products: [
+    selected: [
         {
             _id: false,
             productId: {
                 type: String,
                 required: true
             },
+            name: {
+                type: String,
+                required: true
+            },
+            category: {
+                type: String,
+                required: true
+            },
+            qty: {
+                type: Number,
+                required: true
+            },
             selectedQty: {
                 type: Number,
+                required: true
+            },
+            isAvailable: {
+                type: Boolean,
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true
+            },
+            imageUrl: {
+                type: String,
                 required: true
             }
         }

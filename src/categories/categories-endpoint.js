@@ -61,11 +61,14 @@ export default function makeCategoriesEndpointHandler({
         if (!pathParams.id) {
             try {
                 result = await categoryList.getAllCategories();
-                return objectHandler({
-                    status: HttpResponseType.SUCCESS,
-                    data: result,
-                    message: ''
-                });
+
+                if (result && result.length) {
+                    return objectHandler({
+                        status: HttpResponseType.SUCCESS,
+                        data: result,
+                        message: ''
+                    });
+                }
             } catch (error) {
                 return objectHandler({
                     code: HttpResponseType.INTERNAL_SERVER_ERROR,
@@ -75,7 +78,7 @@ export default function makeCategoriesEndpointHandler({
         } else {
             try {
                 result = await categoryList.findCategoryById(pathParams.id);
-                if (result && result.length) {
+                if (result) {
                     return objectHandler({
                         status: HttpResponseType.SUCCESS,
                         data: result,
@@ -127,11 +130,9 @@ export default function makeCategoriesEndpointHandler({
         const { id } = httpRequest.pathParams || '';
         const { name, imageUrl } = httpRequest.body;
         try {
-            const timestamp = new Date().getTime();
             const data = {
-                timestamp,
                 name,
-                imageUrl
+                imageUrl: encodeUrl(imageUrl)
             };
             let category = await categoryList.updateCategory({ id, data });
             return objectHandler({
