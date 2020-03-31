@@ -5,14 +5,20 @@ import { fieldStateChecker, validate } from '../middlewares/field-validator';
 
 let productRouter = express.Router();
 
-productRouter.get('/', filterRoute, (req, res) => {
-    productController(req, res);
-});
+productRouter.get('/',
+    filterRoute,
+    (req, res) => {
+        productController(req, res);
+    });
 
 /* GET product by id. */
-productRouter.get('/:id', filterRoute, (req, res) => {
-    productController(req, res);
-});
+productRouter.get('/:id',
+    filterRoute,
+    validate('products', '/', 'GET'),
+    fieldStateChecker,
+    (req, res) => {
+        productController(req, res);
+    });
 
 /* POST users register. */
 productRouter.post('/',
@@ -26,7 +32,7 @@ productRouter.post('/',
 /* PUT users register. */
 productRouter.put('/:id',
     filterRoute,
-    validate('products', '/', 'POST'),
+    validate('products', '/', 'PUT'),
     fieldStateChecker,
     (req, res) => {
         productController(req, res);
@@ -35,6 +41,8 @@ productRouter.put('/:id',
 /* DELETE users register. */
 productRouter.delete('/:id',
     filterRoute,
+    validate('products', '/', 'DELETE'),
+    fieldStateChecker,
     (req, res) => {
         productController(req, res);
     });

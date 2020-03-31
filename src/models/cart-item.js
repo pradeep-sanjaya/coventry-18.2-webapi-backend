@@ -56,15 +56,15 @@ let cartItemSchema = CartItemSchema({
     },
     discountsDeducted: {
         type: Number,
-        default: 0
+        default: 0.00
     },
     grossTotalPrice: {
         type: Number,
-        default: 0
+        default: 0.00
     },
     netTotalPrice: {
         type: Number,
-        default: 0
+        default: 0.00
     }
 });
 

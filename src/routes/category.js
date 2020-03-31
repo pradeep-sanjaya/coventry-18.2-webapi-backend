@@ -16,6 +16,8 @@ categoryRouter.get('/',
 /* GET category by id. */
 categoryRouter.get('/:id',
     filterRoute,
+    validate('categories', '/', 'GET'),
+    fieldStateChecker,
     (req, res) => {
         categoryController(req, res);
     });
@@ -39,6 +41,7 @@ categoryRouter.put('/:id',
 
 categoryRouter.delete('/:id',
     filterRoute,
+    validate('categories', '/', 'DELETE'),
     fieldStateChecker,
     (req, res) => {
         categoryController(req, res);

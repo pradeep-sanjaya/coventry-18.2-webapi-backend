@@ -14,8 +14,12 @@ orderRouter.post('/',
         orderController(req, res);
     });
 
-orderRouter.get('/:userId', authenticateJWT, (req, res) => {
-    orderController(req, res);
-});
+orderRouter.get('/:userId',
+    authenticateJWT,
+    validate('orders', '/', 'GET'),
+    fieldStateChecker,
+    (req, res) => {
+        orderController(req, res);
+    });
 
 module.exports = orderRouter;
