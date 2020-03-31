@@ -34,7 +34,21 @@ export default function makeProductsEndpointHandler({
         const pathParams = httpRequest.pathParams;
         if (!pathParams.id) {
             try {
-                result = await productList.getAllProducts();
+                if (httpRequest.queryParams && httpRequest.queryParams.limit) {
+                    const { limit } = httpRequest.queryParams;
+
+                    if (!isNaN(Number(limit))) {
+                        result = await productList.getAllProducts(Number(limit));
+                    } else {
+                        return objectHandler({
+                            code: HttpResponseType.UNPROCESSABLE_ENTITY,
+                            message: 'Limit should be whole Number'
+                        });
+                    }
+                } else {
+                    result = await productList.getAllProducts();
+                }
+
                 return objectHandler({
                     status: HttpResponseType.SUCCESS,
                     data: result,

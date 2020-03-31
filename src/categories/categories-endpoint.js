@@ -60,7 +60,20 @@ export default function makeCategoriesEndpointHandler({
         const pathParams = httpRequest.pathParams;
         if (!pathParams.id) {
             try {
-                result = await categoryList.getAllCategories();
+                if (httpRequest.queryParams && httpRequest.queryParams.limit) {
+                    const { limit } = httpRequest.queryParams;
+
+                    if (!isNaN(Number(limit))) {
+                        result = await categoryList.getAllCategories(Number(limit));
+                    } else {
+                        return objectHandler({
+                            code: HttpResponseType.UNPROCESSABLE_ENTITY,
+                            message: 'Limit should be whole Number'
+                        });
+                    }
+                } else {
+                    result = await categoryList.getAllCategories();
+                }
 
                 if (result && result.length) {
                     return objectHandler({

@@ -30,15 +30,27 @@ export default function makeCategoryList() {
         }
     }
 
-    async function getAllCategories() {
-        try {
-            return Category.find().then((data) => {
-                return data;
-            }).catch((error) => {
+    async function getAllCategories(limit = null) {
+        if (limit) {
+            try {
+                return Category.find().limit(limit).then((data) => {
+                    return data;
+                }).catch((error) => {
+                    return error;
+                });
+            } catch (error) {
                 return error;
-            });
-        } catch (error) {
-            return error;
+            }
+        } else {
+            try {
+                return Category.find().limit(limit).then((data) => {
+                    return data;
+                }).catch((error) => {
+                    return error;
+                });
+            } catch (error) {
+                return error;
+            }
         }
     }
 

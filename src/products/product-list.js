@@ -10,15 +10,27 @@ export default function makeProductList() {
         updateProduct
     });
 
-    async function getAllProducts() {
-        try {
-            return Product.find().then((data) => {
-                return data;
-            }).catch((error) => {
+    async function getAllProducts(limit = null) {
+        if (limit) {
+            try {
+                return Product.find().limit(limit).then((data) => {
+                    return data;
+                }).catch((error) => {
+                    return error;
+                });
+            } catch (error) {
                 return error;
-            });
-        } catch (error) {
-            return error;
+            }
+        } else {
+            try {
+                return Product.find().then((data) => {
+                    return data;
+                }).catch((error) => {
+                    return error;
+                });
+            } catch (error) {
+                return error;
+            }
         }
     }
 
