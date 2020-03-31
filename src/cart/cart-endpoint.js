@@ -66,7 +66,8 @@ export default function makeCartEndPointHandler({
                 const data = {
                     userId: userId,
                     selected: selected,
-                    netTotalPrice: totalPrice.toFixed(2)
+                    netTotalPrice: totalPrice.toFixed(2),
+                    grossTotalPrice: totalPrice.toFixed(2)
                 };
                 const result = await cartList.addTempProducts(data);
 
@@ -120,7 +121,7 @@ export default function makeCartEndPointHandler({
         const { userId } = httpRequest.pathParams;
         const { selected } = httpRequest.body;
 
-        if (userId && selected) {
+        if (userId && selected.length) {
             try {
                 const isValid = await userList.findUserById(userId);
                 let totalPrice = 0;
@@ -149,13 +150,38 @@ export default function makeCartEndPointHandler({
                         });
                     }
 
+                    delete product._id;
+
                     Object.assign(selected[i], product);
                     totalPrice += (product.price * selected[i].selectedQty);
                 }
 
+                const prices = {};
+                const { discountCode } = await cartList.getTempProducts({ userId });
+
+                if (discountCode) {
+                    const { deductiblePercentage } = await metaDataList.findByDiscountCode({ discountCode });
+
+                    if (deductiblePercentage) {
+                        const discountTotal = totalPrice * (deductiblePercentage / 100);
+                        prices.discountsDeducted = discountTotal.toFixed(2);
+                        prices.netTotalPrice = (totalPrice - discountTotal).toFixed(2);
+                    } else {
+                        return objectHandler({
+                            code: HttpResponseType.NOT_FOUND,
+                            message: `Applied discount code '${discountCode}' is missing or invalid`
+                        });
+                    }
+                } else {
+                    prices.netTotalPrice = totalPrice.toFixed(2);
+                }
+                prices.grossTotalPrice = totalPrice.toFixed(2);
+
                 const data = {
-                    selected,
-                    netTotalPrice: totalPrice.toFixed(2)
+                    discountsDeducted: prices.discountsDeducted,
+                    netTotalPrice: prices.netTotalPrice,
+                    grossTotalPrice: prices.grossTotalPrice,
+                    selected
                 };
 
                 const result = await cartList.updateTempProducts(userId, data);
@@ -196,18 +222,18 @@ export default function makeCartEndPointHandler({
                 let total = 0;
 
                 products.selected.map((product) => {
-                    total = total + (product.selectedQty * product.price);
+                    total += (product.selectedQty * product.price);
                 });
 
                 const { discountCode } = await cartList.getTempProducts({ userId });
 
                 if (discountCode) {
-                    const { deductiblePercentage } = await metaDataList.findByDiscountCode(discountCode);
+                    const { deductiblePercentage } = await metaDataList.findByDiscountCode({ discountCode });
 
                     if (deductiblePercentage) {
                         const discountTotal = total * (deductiblePercentage / 100);
-                        products.discountsDeducted = discountTotal;
-                        products.netTotalPrice = total - discountTotal;
+                        products.discountsDeducted = discountTotal.toFixed(2);
+                        products.netTotalPrice = total - discountTotal.toFixed(2);
                     } else {
                         return objectHandler({
                             code: HttpResponseType.NOT_FOUND,
@@ -215,9 +241,9 @@ export default function makeCartEndPointHandler({
                         });
                     }
                 } else {
-                    products.netTotalPrice = total;
+                    products.netTotalPrice = total.toFixed(2);
                 }
-                products.grossTotalPrice = total;
+                products.grossTotalPrice = total.toFixed(2);
 
                 const updatedProducts = await cartList.updateTempProducts(userId, products);
 
@@ -234,10 +260,7 @@ export default function makeCartEndPointHandler({
                     });
                 }
             } else {
-                return objectHandler({
-                    code: HttpResponseType.NOT_FOUND,
-                    message: `Products are empty in user id '${userId}' cart`
-                });
+                return deleteCart(httpRequest);
             }
         } catch (error) {
             return objectHandler({

@@ -163,14 +163,18 @@ export default function makeMetaDataEndpointHandler({
         if (discount) {
             const cart = await cartList.getTempProducts({ userId });
             if (cart) {
-                const discountTotal = cart.netTotalPrice * (discount.deductiblePercentage/100);
-                const total = cart.netTotalPrice;
+                let totalPrice = 0;
+                cart.selected.map((product) => {
+                    totalPrice += product.price * product.selectedQty;
+                });
+
+                const discountTotal = totalPrice * (discount.deductiblePercentage/100);
 
                 cart.discountCode = discountCode;
                 cart.discountsDeducted = discountTotal;
 
-                cart.grossTotalPrice = total;
-                cart.netTotalPrice = total - discountTotal;
+                cart.grossTotalPrice = totalPrice;
+                cart.netTotalPrice = totalPrice - discountTotal;
 
                 const priceUpdatedCart = await cartList.updateTempProducts(userId, cart);
 
