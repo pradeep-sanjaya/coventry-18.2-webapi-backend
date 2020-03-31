@@ -6,13 +6,13 @@ export default function makeUsersEndpointHandler({
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-            case 'GET':
-                return getUsers(httpRequest);
-            default:
-                return objectHandler({
-                    code: HttpResponseType.METHOD_NOT_ALLOWED,
-                    message: `${httpRequest.method} method not allowed`
-                });
+        case 'GET':
+            return getUsers(httpRequest);
+        default:
+            return objectHandler({
+                code: HttpResponseType.METHOD_NOT_ALLOWED,
+                message: `${httpRequest.method} method not allowed`
+            });
         }
     };
 
@@ -56,5 +56,4 @@ export default function makeUsersEndpointHandler({
             }
         }
     }
-
 }

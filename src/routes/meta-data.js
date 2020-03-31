@@ -29,7 +29,6 @@ metaDataRouter.get('/discount-codes',
     });
 
 metaDataRouter.get('/discount-codes/:discountCode',
-    filterRoute,
     validate('meta-data', '/discount-codes', 'GET'),
     fieldStateChecker,
     (req, res) => {
