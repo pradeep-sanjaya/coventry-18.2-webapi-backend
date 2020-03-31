@@ -187,15 +187,7 @@ function orderValidator(route) {
                 .isString().withMessage('District should be String'),
             body('deliveryAddress.zipCode')
                 .exists().withMessage('Zip code is required')
-                .isPostalCode('any').withMessage('Postal code should be type of Postal code'),
-            body('selected', 'Selected is required').exists()
-                .isArray().withMessage('Selected should be array'),
-            body('selected.*.productId')
-                .exists().withMessage('Product id is required')
-                .isMongoId().withMessage('Product id is invalid mongo id'),
-            body('selected.*.selectedQty')
-                .exists().withMessage('Selected qty is required')
-                .isNumeric().withMessage('Selected qty should be Number')
+                .isPostalCode('any').withMessage('Postal code should be type of Postal code')
         ];
     }
 }
