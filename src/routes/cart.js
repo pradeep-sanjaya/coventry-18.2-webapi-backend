@@ -24,12 +24,16 @@ cartRouter.put('/products/:userId',
 
 cartRouter.get('/products/:userId',
     authenticateJWT,
+    validate('cart', '/products', 'GET'),
+    fieldStateChecker,
     (req, res) => {
         cartController(req, res);
     });
 
 cartRouter.delete('/:userId',
     authenticateJWT,
+    validate('cart', '/products', 'DELETE'),
+    fieldStateChecker,
     (req, res) => {
         cartController(req, res);
     });

@@ -6,7 +6,6 @@ import HttpResponseType from '../models/http-response-type';
 import { errorResponse } from '../helpers/response/response-dispatcher';
 import { bypassHelper } from '../helpers/utilities/bypass';
 
-
 //token check middleware
 export default function authenticateJWT(req, res, next) {
     const authHeader = req.headers.authorization;

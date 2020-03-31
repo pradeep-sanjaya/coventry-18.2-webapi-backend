@@ -9,7 +9,7 @@ import config from './config/config';
 import initializeDB from './helpers/database';
 
 import authenticateJWT from './middlewares/auth';
-import uploadImg from './middlewares/upload-middleware';
+import uploadImg from './middlewares/image-uploader';
 
 import { errorResponse } from './helpers/response/response-dispatcher';
 
@@ -21,6 +21,8 @@ import metaDataRouter from './routes/meta-data';
 import cartRouter from './routes/cart';
 import orderRouter from './routes/order';
 import imageRouter from './routes/image';
+import userRouter from './routes/user';
+
 
 import HttpResponseType from './models/http-response-type';
 
@@ -39,6 +41,7 @@ app.use('/api/v1/orders', authenticateJWT, orderRouter);
 app.use('/api/v1/meta', authenticateJWT, metaDataRouter);
 app.use('/api/v1/cart', authenticateJWT, cartRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
 app.use('/api/v1/images', uploadImg.single('image'), imageRouter);
 
 app.use('/api-docs', apiDocsRouter);
