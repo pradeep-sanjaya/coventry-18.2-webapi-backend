@@ -1,24 +1,30 @@
-import {objectHandler} from '../helpers/utilities/normalize-request';
+import { objectHandler } from '../helpers/utilities/normalize-request';
 import HttpResponseType from '../models/http-response-type';
+import sendEmail from '../helpers/mail/mailer';
+import config from '../config/config';
+
+import ejs from 'ejs';
+var path = require('path');
 
 export default function makeOrderEndPointHandler({
     orderList,
-    cartList
+    cartList,
+    userList
 }) {
     return async function handle(httpRequest) {
         switch (httpRequest.method) {
-        case 'POST':
-            return addOrderDetails(httpRequest);
-        case 'GET':
-            if (httpRequest.queryParams.orderId) {
-                return getOrderDetails(httpRequest);
-            }
-            return getAllOrderDetails(httpRequest);
-        default:
-            return objectHandler({
-                code: HttpResponseType.METHOD_NOT_ALLOWED,
-                message: `${httpRequest.method} method not allowed`
-            });
+            case 'POST':
+                return addOrderDetails(httpRequest);
+            case 'GET':
+                if (httpRequest.queryParams.orderId) {
+                    return getOrderDetails(httpRequest);
+                }
+                return getAllOrderDetails(httpRequest);
+            default:
+                return objectHandler({
+                    code: HttpResponseType.METHOD_NOT_ALLOWED,
+                    message: `${httpRequest.method} method not allowed`
+                });
         }
     };
 
@@ -71,6 +77,38 @@ export default function makeOrderEndPointHandler({
                     const result = await orderList.addOrderProducts(order);
 
                     if (result) {
+
+                        console.log(result);
+
+                        var template = path.join(
+                            path.dirname(require.main.filename),
+                            'templates',
+                            'emails',
+                            'order.ejs'
+                        );
+
+                        let user = await userList.findUserById(result.userId);
+                        console.log(user);
+
+                        console.log("before sending ejs template email");
+                        //send order email
+                        ejs.renderFile(template, { order: order, user: user }, async function (err, data) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log("template: " + data);
+
+                                await sendEmail({
+                                    from: config.adminEmail,
+                                    to: user.email,
+                                    subject: 'Order Confirmation',
+                                    text: data,
+                                    html: data
+                                });
+                            }
+
+                        });
+
                         return objectHandler({
                             status: HttpResponseType.SUCCESS,
                             data: result,

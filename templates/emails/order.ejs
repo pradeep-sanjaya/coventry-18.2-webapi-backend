@@ -1,0 +1,27 @@
+<p>Dear <%= user.firstName %>,</p>
+
+<p>Your order details</p>
+<h4>Delivery Address</h4>
+<p><%= order.deliveryAddress.street %>, <%= order.deliveryAddress.district %>, <%= order.deliveryAddress.zipCode %></p>
+
+<h4>Items</h4>
+<table>
+    <th>
+    <td align="left">Name</td>
+    <td align="right">Qty</td>
+    <td align="right">Price</td>
+    </th>
+
+    <% order.selected.forEach(function(product) { %>
+    <tr>
+        <td align="left"><%= product.name %></td>
+        <td align="right"><%= product.selectedQty %></td>
+        <td align="right"><%= product.price %></td>
+    </tr>
+    <% }); %>
+    <tr>
+        <td>Total</td>
+        <td>&nbsp;</td>
+        <td><%= order.netTotalPrice %></td>
+    </tr>
+</table>
