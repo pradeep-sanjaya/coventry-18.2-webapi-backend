@@ -29,7 +29,6 @@ export default function makeCartList() {
         }
     }
 
-    //TODO: Deprecated and to be removed
     async function findOneByOrderId(id) {
         try {
             return Order.findOne({ _id: id });

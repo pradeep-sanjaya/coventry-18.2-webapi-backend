@@ -1,5 +1,3 @@
-import ObjectID from 'mongoose';
-
 import User from '../models/user';
 import hasher from '../helpers/hasher';
 
@@ -32,10 +30,7 @@ export default function makeAuthList() {
 
     async function findUserById(userId) {
         try {
-            const isValid = ObjectID.isValidObjectId(userId);
-            if (isValid) {
-                return User.findOne({ _id: { $eq: userId } });
-            }
+            return User.findOne({ _id: { $eq: userId } });
         } catch (error) {
             console.log(error.message);
             return error;

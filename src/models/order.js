@@ -36,6 +36,18 @@ let orderSchema = OrderSchema({
         type: Number,
         required: true
     },
+    discountCode: {
+        type: String,
+        default: null
+    },
+    discountsDeducted: {
+        type: Number,
+        default: 0
+    },
+    grossTotalPrice: {
+        type: Number,
+        default: 0
+    },
     selected: [
         {
             _id: false,

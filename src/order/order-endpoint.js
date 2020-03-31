@@ -10,6 +10,9 @@ export default function makeOrderEndPointHandler({
         case 'POST':
             return addOrderDetails(httpRequest);
         case 'GET':
+            if (httpRequest.queryParams.orderId) {
+                return getOrderDetails(httpRequest);
+            }
             return getAllOrderDetails(httpRequest);
         default:
             return objectHandler({
@@ -25,7 +28,14 @@ export default function makeOrderEndPointHandler({
         let cart = await cartList.getTempProducts({ userId });
 
         if (cart) {
-            const { selected, netTotalPrice } = cart;
+            const {
+                selected,
+                netTotalPrice,
+                discountCode,
+                discountsDeducted,
+                grossTotalPrice
+            } = cart;
+
             if (httpRequest.body) {
                 try {
                     for (let i = 0; i < selected.length; i++) {
@@ -51,6 +61,9 @@ export default function makeOrderEndPointHandler({
                         userId,
                         paymentType,
                         deliveryAddress,
+                        discountCode,
+                        discountsDeducted,
+                        grossTotalPrice,
                         netTotalPrice,
                         selected
                     };
@@ -110,12 +123,11 @@ export default function makeOrderEndPointHandler({
         }
     }
 
-    //TODO: Deprecated and to be removed
     async function getOrderDetails(httpRequest) {
-        const { id } = httpRequest.pathParams;
+        const { orderId } = httpRequest.queryParams;
 
-        if (id) {
-            const result = await orderList.findOneByOrderId(id);
+        if (orderId) {
+            const result = await orderList.findOneByOrderId(orderId);
 
             if (result) {
                 return objectHandler({
@@ -126,7 +138,7 @@ export default function makeOrderEndPointHandler({
             } else {
                 return objectHandler({
                     code: HttpResponseType.CLIENT_ERROR,
-                    message: `Order details not found for order Id '${id}'`
+                    message: `Order details not found for order Id '${orderId}'`
                 });
             }
         } else {
