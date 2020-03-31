@@ -1,10 +1,12 @@
 import Product from '../models/product';
+import Category from '../models/category';
 
 export default function makeProductList() {
     return Object.freeze({
         addProduct,
         getAllProducts,
         getProductsByCategory,
+        getProductsByCategoryId,
         findProductById,
         removeProduct,
         updateProduct
@@ -51,6 +53,28 @@ export default function makeProductList() {
             }).catch((error) => {
                 return error;
             });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async function getProductsByCategoryId(categoryId) {
+        try {
+
+            return Category.findOne({
+                _id: categoryId
+            }).lean(true).then((category) => {
+                return Product.find({
+                    category: category.name
+                }).lean(true).then((product) => {
+                    return product;
+                }).catch((error) => {
+                    return error;
+                });
+            }).catch((error) => {
+                return error;
+            });
+
         } catch (error) {
             return error;
         }
